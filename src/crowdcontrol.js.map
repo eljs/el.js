@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "crowdcontrol.js",
+  "sourceRoot": "..",
+  "sources": [
+    "src/crowdcontrol.coffee"
+  ],
+  "names": [],
+  "mappings": ""
+}
