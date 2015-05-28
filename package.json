@@ -1,14 +1,14 @@
 {
   "name": "crowdcontrol",
   "version": "1.0.0",
-  "description": "One Click Checkout for Crowdstart",
+  "description": "Riot helpers for crowdstart",
   "main": "crowdcontrol.js",
   "scripts": {
     "prepublish": "cake build && cake build-min",
     "test": "cake test"
   },
   "keywords": [
-    "riotjs"
+    "crowdstart"
   ],
   "author": "Crowdstart, LLC",
   "license": "MIT",
@@ -17,7 +17,8 @@
     "cake": "^0.1.1",
     "coffee-script": "^1.9.2",
     "executive": "^0.4.7",
-    "requisite": "^1.9.4"
+    "requisite": "^1.9.4",
+    "uglify-js": "^2.4.23"
   },
   "dependencies": {
     "riot": "^2.0.15"
