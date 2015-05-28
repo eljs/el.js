@@ -1,0 +1,25 @@
+{
+  "name": "crowdcontrol",
+  "version": "1.0.0",
+  "description": "One Click Checkout for Crowdstart",
+  "main": "crowdcontrol.js",
+  "scripts": {
+    "prepublish": "cake build && cake build-min",
+    "test": "cake test"
+  },
+  "keywords": [
+    "riotjs"
+  ],
+  "author": "Crowdstart, LLC",
+  "license": "MIT",
+  "devDependencies": {
+    "bebop": "^1.3.6",
+    "cake": "^0.1.1",
+    "coffee-script": "^1.9.2",
+    "executive": "^0.4.7",
+    "requisite": "^1.9.4"
+  },
+  "dependencies": {
+    "riot": "^2.0.15"
+  }
+}
