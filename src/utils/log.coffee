@@ -15,5 +15,6 @@ log.warn = ()->
 log.error = ()->
   console.log 'ERROR:'
   console.log.apply console.log, arguments
+  throw new arguments[0]
 
 module.exports = log

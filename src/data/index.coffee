@@ -1,3 +1,4 @@
 module.exports =
-  api: require './api'
-  source: require './source'
+  Api: require './api'
+  Source: require './source'
+  Policy: require './policy'

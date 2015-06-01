@@ -31,11 +31,11 @@ class Api
     @scheduledTasks = []
 
     # make this the default api if none is provided
-    config.Api = @ if !config.Api?
+    config.api = @ if !config.api?
 
-  # get/post/put/patch/del send a GET/POST/PUT/PATCH/DELETE request
+  # get/post/put/patch/delete send a GET/POST/PUT/PATCH/DELETE request
   #  path is appending to the url to determine the endpoint
-  #    ex. path = '/user' creates a request to 'https://api.crowdstart.com/user'
+  #    ex. path = 'user' creates a request to 'https://api.crowdstart.com/user'
   #
   #  return a promise
   get:    (path)->
@@ -58,7 +58,7 @@ class Api
       p = '/' + path
     return Q.xhr.patch @url + p, data
 
-  del:    (path)->
+  delete: (path)->
     if path[0] != '/'
       p = '/' + path
     return Q.xhr.delete @url + p
@@ -126,5 +126,4 @@ class Api
         if length > 0
           @loop()
 
-module.exports = (url, token)->
-  return new Api(url, token)
+module.exports = Api

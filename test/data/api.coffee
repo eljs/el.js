@@ -7,7 +7,7 @@ should = chai.should()
 _ = require 'underscore'
 Q = require 'q'
 
-api = require '../../src/data/api'
+Api = require '../../src/data/api'
 log = require '../../src/utils/log'
 
 describe 'Api Task Scheduling', ->
@@ -20,7 +20,7 @@ describe 'Api Task Scheduling', ->
       d.reject()
     , 200
 
-    a = api()
+    a = new Api
     a.scheduleOnce fn, 100
     d.promise.should.eventually.equal 'win'
 
@@ -46,7 +46,7 @@ describe 'Api Task Scheduling', ->
       d3.resolve('win')
     , 400
 
-    a = api()
+    a = new Api
     t = a.scheduleEvery fn, 100
 
     d1.promise.should.eventually.equal 'win'
@@ -74,10 +74,8 @@ describe 'Api Task Scheduling', ->
       t.cancel()
     , 200
 
-    a = api()
+    a = new Api
     t = a.scheduleEvery fn, 100, true
 
     d1.promise.should.eventually.equal 'win'
     d2.promise.should.eventually.equal 'win'
-
-
