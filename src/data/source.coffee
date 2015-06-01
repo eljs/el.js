@@ -80,31 +80,34 @@ class Source
   _load: ()->
     if @api?
       success = (res) =>
-        @_trigger Events.LoadData, res
+        @trigger Events.LoadData, res
       fail = (res) =>
-        @_trigger Events.LoadError, res
+        @trigger Events.LoadError, res
 
       return @api.get(@path).then success, fail
     else
       d = Q.defer()
       requestAnimationFrame ()=>
-        @_trigger Events.LoadData, @data
+        @trigger Events.LoadData, @data
         d.resolve @data
       return d.promise
 
-  _on: (event, fn)->
-    @_mediator.on @name + '.' + event, fn
+  eventName: (event)->
+    return @name + '.' + event.trim().replace(' ', ' ' + @name + '.')
 
-  _once: (event, fn)->
-    @_mediator.one @name + '.' + event, fn
+  on: (event, fn)->
+    @_mediator.on @eventName(event), fn
 
-  _off: (event)->
-    @_mediator.off @name + '.' + event
+  once: (event, fn)->
+    @_mediator.one @eventName(event), fn
 
-  _trigger: (event)->
+  off: (event, fn)->
+    @_mediator.off @eventName(event), fn
+
+  trigger: (event)->
     args = Array.prototype.slice.call arguments
     args.shift()
-    args.unshift @name + '.' + event
+    args.unshift @eventName(event)
 
     @_mediator.trigger.apply @, args
 

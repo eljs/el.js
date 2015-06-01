@@ -21,10 +21,10 @@ describe 'Source Loading', ->
 
     d = Q.defer()
 
-    source._once Source.Events.LoadData, (data)->
+    source.once Source.Events.LoadData, (data)->
       d.resolve data
 
-    source._once Source.Events.LoadError, ()->
+    source.once Source.Events.LoadError, ()->
       d.resolve 'fail'
 
     setTimeout ()->
@@ -39,10 +39,10 @@ describe 'Source Loading', ->
     a = new Api 'http://localhost:12345'
     source = new Source(name: 'test', api: a, path: 'data.json')
 
-    source._once Source.Events.LoadData, ()->
+    source.once Source.Events.LoadData, ()->
       d.resolve 'win'
 
-    source._once Source.Events.LoadError, (resp)->
+    source.once Source.Events.LoadError, (resp)->
       log.warn(resp.stack)
       d.resolve 'fail'
 
@@ -58,10 +58,10 @@ describe 'Source Loading', ->
 
     d = Q.defer()
 
-    source._once Source.Events.LoadData, ()->
+    source.once Source.Events.LoadData, ()->
       d.resolve 'win'
 
-    source._once Source.Events.LoadError, ()->
+    source.once Source.Events.LoadError, ()->
       d.resolve 'fail'
 
     setTimeout ()->
@@ -76,12 +76,12 @@ describe 'Source Eventing', ->
     source = new Source(name: 'test', api: a)
 
     val = 0
-    source._on 'echo', (v)-> val = v
-    source._trigger 'echo', 1
+    source.on 'echo', (v)-> val = v
+    source.trigger 'echo', 1
     val.should.equal 1
 
-    source._off 'echo'
-    source._trigger 'echo', 2
+    source.off 'echo'
+    source.trigger 'echo', 2
     val.should.equal 1
 
   it 'should bind and events and execute once', ->
@@ -89,11 +89,11 @@ describe 'Source Eventing', ->
     source = new Source(name: 'test', api: a)
 
     val = 0
-    source._once 'echo', (v)-> val = v
-    source._trigger 'echo', 1
+    source.once 'echo', (v)-> val = v
+    source.trigger 'echo', 1
     val.should.equal 1
 
-    source._trigger 'echo', 2
+    source.trigger 'echo', 2
     val.should.equal 1
 
   it 'should prefix events with source name', ->
@@ -105,5 +105,5 @@ describe 'Source Eventing', ->
     val = 0
     mediator.one 'test.echo', (v)-> val = v
 
-    source._trigger 'echo', 1
+    source.trigger 'echo', 1
     val.should.equal 1

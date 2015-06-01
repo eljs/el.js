@@ -17,14 +17,13 @@ class View
     self = @
 
     for name, handler of @events
-      utils.mediator name, handler
+      utils.mediator.on name, handler
 
     riot.tag @name, @html, @css, @attrs, (opts)->
-      @opts = opts
       @view = self
       @model = {}
       @mediator = utils.mediator
 
-      @view.init.apply @
+      @view.init.call @, opts
 
   init: ()->
