@@ -1,5 +1,11 @@
 riot = require 'riot'
 
+Q = require 'q'
+if XMLHttpRequest?
+  require('q-xhr')(XMLHttpRequest, Q)
+else
+  require('q-xhr')
+
 Function::property = (prop, desc) ->
   Object.defineProperty @prototype, prop, desc
 

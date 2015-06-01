@@ -1,8 +1,10 @@
 _ = require 'underscore'
+Q = require 'q'
 
 config = '../config'
 
 utils = require '../utils'
+requestAnimationFrame = utils.shim.requestAnimationFrame
 log = utils.log
 
 Policy = require './policy'
@@ -13,6 +15,8 @@ Events =
 
 # A Source serves data either from the backend or from a backing set of data
 class Source
+  @Events: Events
+
   ### Basic Info ###
 
   # name is used to prepend events
@@ -63,23 +67,30 @@ class Source
     @initTask()
 
   initTask: ()->
-    policy = @policy || Policy.Once
-    if policy.intervalTime == Infinity
-      @_task = @api.scheduleOnce (()=>@_load()), 0
+    if @api?
+      policy = @policy || Policy.Once
+      if policy.intervalTime == Infinity
+        @_task = @api.scheduleOnce (()=>@_load()), 0
+      else
+        @_task = @api.scheduleEvery (()=>@_load()), policy.intervalTime, true
     else
-      @_task = @api.scheduleEvery ((=>@_load())), policy.intervalTime, true
+      requestAnimationFrame ()=>
+        @_load()
 
   _load: ()->
     if @api?
       success = (res) =>
-        @_trigger Events.LoadData, data
+        @_trigger Events.LoadData, res
       fail = (res) =>
         @_trigger Events.LoadError, res
 
-      api.get(@path).then success, fail
+      return @api.get(@path).then success, fail
     else
+      d = Q.defer()
       requestAnimationFrame ()=>
         @_trigger Events.LoadData, @data
+        d.resolve @data
+      return d.promise
 
   _on: (event, fn)->
     @_mediator.on @name + '.' + event, fn

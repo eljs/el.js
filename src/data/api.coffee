@@ -1,6 +1,5 @@
 _ = require 'underscore'
 
-require 'q-xhr'
 Q = require 'q'
 
 config = require '../config'
