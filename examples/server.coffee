@@ -2,8 +2,14 @@ log = require('../src/utils').log
 
 path = require 'path'
 express = require 'express'
+simulateLatency = require('express-simulate-latency')
+
 app = express()
 
+smallLag = simulateLatency min: 100, max: 500
+bigLag = simulateLatency min: 1000, max: 5000
+
+app.use smallLag
 app.use express.static __dirname + '/'
 
 app.get '/crowdcontrol.js', (req, res)->
@@ -17,9 +23,53 @@ setInterval ()->
   secondsList.length = 10
 , 1000
 
-app.get '/seconds', (req, res)->
+app.get '/seconds', bigLag, (req, res)->
+  res.send secondsList
 
-  res.send JSON.stringify secondsList
+polygonIds = [0,1,2,3,4,5,6]
+polygons = [
+  {
+    id: 0
+    value: 'nothing'
+  }
+  {
+    id: 1
+    value: 'point'
+  }
+  {
+    id: 2
+    value: 'line'
+  }
+  {
+    id: 3
+    value: 'triangle'
+  }
+  {
+    id: 4
+    value: 'quadralateral'
+  }
+  {
+    id: 5
+    value: 'pentagon'
+  }
+  {
+    id: 6
+    value: 'hexagon'
+  }
+]
+
+app.get '/polygon', (req, res)->
+  ids = polygonIds.slice()
+
+  for id, i in ids
+    n = Math.floor(Math.random() * (i + 1))
+    swap = ids[i]
+    ids[i] = ids[n]
+    ids[n] = swap
+  res.send ids
+
+app.get '/polygon/:id', bigLag, (req, res)->
+  res.send polygons[req.params.id]
 
 app.listen 12345, ()->
   log.info 'STARTING EXAMPLE SERVER'

@@ -2,7 +2,10 @@ View = crowdcontrol.view.View
 Source = crowdcontrol.data.Source
 
 api = new crowdcontrol.data.Api 'http://localhost:12345'
-policy = new crowdcontrol.data.Policy intervalTime: 3000
+policy = new crowdcontrol.data.Policy
+  intervalTime: 5000
+streamingPolicy = new crowdcontrol.data.TabularRestfulStreamingPolicy
+  intervalTime: 20000
 
 class TableView extends View
   name: 'live-table'
@@ -33,16 +36,12 @@ class TableView extends View
       policy: policy
 
     src.on Source.Events.Loading, ()=>
+      @loading = true
       @update()
 
-    src.on Source.Events.LoadData, (res)=>
+    src.on Source.Events.LoadData, (data)=>
       @loading = false
-      # simulate latency
-      setTimeout ()=>
-        @loading = true
-        @update()
-      , 1000
-      @model = res
+      @model = data
       @update()
 
 new TableView()
@@ -55,3 +54,50 @@ class ContentView extends View
   js: ()->
 
 new ContentView
+
+class StreamingTable extends View
+  name: 'streaming-table'
+  html: """
+    <div class="{ block: true, loading: loading }">
+      <table>
+        <thead>
+          <tr>
+            <th>Polygons in Random Order</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr each="{ model }" if="{ value != null }" class="animated flipInX">
+            <td><live-content model="{ value }"></td>
+          </tr>
+          <tr></tr>
+        </tbody>
+      </table>
+      <div class="loader">Loading...</div>
+    </div>
+  """
+  js: ()->
+    @loading = false
+
+    src = new Source
+      name: 'table2'
+      api: api
+      path: 'polygon'
+      policy: streamingPolicy
+
+    src.on Source.Events.Loading, ()=>
+      @loading = true
+      @model = []
+      @update()
+
+    src.on Source.Events.LoadDataPartial, (data)=>
+      @update()
+      @model = data
+      console.log(@model)
+
+    src.on Source.Events.LoadData, (data)=>
+      @loading = false
+      @model = data
+      console.log(@model)
+      @update()
+
+new StreamingTable()

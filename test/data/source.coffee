@@ -33,7 +33,7 @@ describe 'Source Loading', ->
 
     d.promise.should.eventually.equal 'data'
 
-  it 'should try loading and API', ->
+  it 'should try loading with API', ->
     d = Q.defer()
 
     a = new Api 'http://localhost:12345'
@@ -42,8 +42,7 @@ describe 'Source Loading', ->
     source.once Source.Events.LoadData, ()->
       d.resolve 'win'
 
-    source.once Source.Events.LoadError, (resp)->
-      log.warn(resp.stack)
+    source.once Source.Events.LoadError, ()->
       d.resolve 'fail'
 
     setTimeout ()->

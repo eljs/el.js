@@ -21,7 +21,6 @@ class View
 
     riot.tag @name, @html, @css, @attrs, (opts)->
       @view = self
-      console.log("ARG", opts)
       @model = opts.model
       @model = {} if !@model?
 

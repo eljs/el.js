@@ -7,12 +7,13 @@ utils = require '../utils'
 requestAnimationFrame = utils.shim.requestAnimationFrame
 log = utils.log
 
-Policy = require './policy'
+Policy = require('./policy').Policy
 
 Events =
   Loading: 'Loading'
   LoadData: 'LoadData'
   LoadError: 'LoadError'
+  LoadDataPartial: 'LoadDataPartial'
 
 # A Source serves data either from the backend or from a backing set of data
 class Source
@@ -46,8 +47,11 @@ class Source
     get: ->
       return @_policy
     set: (value) ->
+      log "Set Policy", @policy
+      @_policy.source = null if @_policy?
       @stop()
-      @_policy = value
+      @_policy = value || Policy.Once
+      @_policy.source = @ if @_policy?
       @start()
 
   # task is the result of calling api's task scheduling
@@ -57,9 +61,8 @@ class Source
   _mediator: utils.mediator
 
   constructor: (@options)->
-    if @options.policy
-      @options._policy = @options.policy
-      @options.policy = undefined
+    @policy = @options.policy || Policy.Once
+    delete @options.policy
 
     _.extend @, @options
 
@@ -69,7 +72,7 @@ class Source
 
   start: ()->
     if @api?
-      policy = @policy || Policy.Once
+      policy = @policy
       if policy.intervalTime == Infinity
         @_task = @api.scheduleOnce (()=>@_load()), 0
       else
@@ -86,15 +89,22 @@ class Source
     @policy.unload()
     if @api?
       @trigger Events.Loading
-      success = (res) =>
-        @policy.load(res).then (data)=>
-          @trigger Events.LoadData, data
-          @data = data
-        , fail
-      fail = (res) =>
-        @trigger Events.LoadError, res
 
-      return @api.get(@path).then success, fail
+      success = (data)=>
+        @trigger Events.LoadData, data
+        @data = data
+      error = (err) =>
+        @trigger Events.LoadError, err
+      progress = (data) =>
+        @trigger Events.LoadDataPartial, data
+        @data = data
+
+      load = (res) =>
+        return @policy.load(res).done(success, error, progress)
+      fail = (res) =>
+        @trigger Events.LoadError, res.message
+
+      return @api.get(@path).then(load, fail)
     else
       d = Q.defer()
       requestAnimationFrame ()=>

@@ -11,6 +11,9 @@ Q = require 'q'
 class Policy
   intervalTime: Infinity
 
+  # source associated with policy
+  source: null
+
   # events are the list of events that will be added to the datasource
   events: null
 
@@ -19,9 +22,11 @@ class Policy
 
   # load is a function that takes json data and transforms it
   load: (res)->
-    data = JSON.parse res.data
     d = Q.defer()
-    d.resolve(data)
+
+    data = res.data
+
+    d.resolve data
     return d.promise
 
   constructor: (@options)->
@@ -30,11 +35,43 @@ class Policy
   @Once: new Policy()
 
 # Streaming policy creates a datasource for each
-class StreamingPolicy extends Policy
+class TabularRestfulStreamingPolicy extends Policy
   load: (res)->
-    data = JSON.parse res.data
+    d = Q.defer()
+
+    data = res.data
+
     if !_.isArray(data)
-      return data
+      d.resolve data
+      return d.promise
 
+    togo = 0
+    failed = false
+    fail = (res)->
+      togo--
+      d.reject res.message
 
-module.exports = Policy
+    for id, i in data
+      if !_.isObject(id)
+        togo++
+
+        data[i] = null
+        do (id, i)=>
+          success = (res)->
+            togo--
+            data[i] = res.data
+            if togo == 0
+              d.resolve(data)
+            else if !failed
+              partialData = []
+              for datum in data
+                partialData.push(datum) if datum?
+              d.notify(partialData)
+
+          @source.api.get(@source.path + '/' + id).then success, fail
+
+    return d.promise
+
+module.exports =
+  Policy: Policy
+  TabularRestfulStreamingPolicy: TabularRestfulStreamingPolicy

@@ -35,7 +35,7 @@ h3 {
   width: 800px;
 }
 
-live-table {
+live-table, streaming-table {
   position: relative;
   display: table;
 }
@@ -190,6 +190,7 @@ table:after {
   -webkit-transition: opacity .4s ease-in-out, max-height .4s step-end;
 }
 
-.col-1-3 {
-  width: 33%;
+.col-1-2 {
+  width: 50%;
+  float: left;
 }

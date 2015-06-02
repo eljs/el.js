@@ -20,6 +20,7 @@
     "coffee-script": "^1.9.2",
     "executive": "^0.4.7",
     "express": "^4.12.4",
+    "express-simulate-latency": "0.0.2",
     "mocha": "^2.2.5",
     "mock-xhr": "^0.1.0",
     "requisite": "^1.9.4",
