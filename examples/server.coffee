@@ -34,11 +34,11 @@ polygons = [
   }
   {
     id: 1
-    value: 'point'
+    value: 'monogon'
   }
   {
     id: 2
-    value: 'line'
+    value: 'digon'
   }
   {
     id: 3
@@ -46,7 +46,7 @@ polygons = [
   }
   {
     id: 4
-    value: 'quadralateral'
+    value: 'quadrilateral'
   }
   {
     id: 5
