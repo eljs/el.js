@@ -10,6 +10,11 @@ task 'watch', 'watch for changes and recompile', ->
 task 'build-min', 'Build minified crowdcontrol.min.js', ->
   exec 'node_modules/.bin/requisite src/crowdcontrol.coffee -m -o crowdcontrol.min.js'
 
+task 'example', 'Launch Examples', ->
+  exec 'node_modules/.bin/coffee -bc examples/table/'
+  exec 'coffee examples/server.coffee'
+  exec 'cake watch'
+
 task 'test', 'Run tests', ->
   exec 'node_modules/.bin/coffee -bcm -o .test/ test/'
   exec [

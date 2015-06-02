@@ -10,20 +10,29 @@ class View
   css: ''
   attrs: ''
   events: {}
+  js: ()->
 
   constructor: (@options)->
     _.extend @, @options
 
     self = @
 
-    for name, handler of @events
-      utils.mediator.on name, handler
+    @init()
 
     riot.tag @name, @html, @css, @attrs, (opts)->
       @view = self
-      @model = {}
-      @mediator = utils.mediator
+      console.log("ARG", opts)
+      @model = opts.model
+      @model = {} if !@model?
 
-      @view.init.call @, opts
+      @obs = {}
+      utils.shim.observable @obs
+
+      for name, handler of @view.events
+        utils.mediator.on name, handler
+
+      @view.js.call @, opts
 
   init: ()->
+
+module.exports = View

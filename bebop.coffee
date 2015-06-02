@@ -7,6 +7,10 @@ files =
   js:
     in:  'src/crowdcontrol.coffee'
     out: 'crowdcontrol.js'
+  exampleTableJs:
+    in:  'examples/table/table.coffee'
+    out: 'examples/table/table.js'
+
 
 module.exports =
   port: 4242
@@ -15,7 +19,6 @@ module.exports =
 
   exclude: [
     /css/
-    /examples/
     /lib/
     /node_modules/
     /vendor/
@@ -23,6 +26,9 @@ module.exports =
 
   compilers:
     coffee: (src) ->
+      if /examples.table/.test src
+        return "#{requisite} #{files.exampleTableJs.in} -o #{files.exampleTableJs.out}"
+
       if /^src/.test src
         return "#{requisite} #{files.js.in} -o #{files.js.out}"
 

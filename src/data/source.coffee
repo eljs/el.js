@@ -10,6 +10,7 @@ log = utils.log
 Policy = require './policy'
 
 Events =
+  Loading: 'Loading'
   LoadData: 'LoadData'
   LoadError: 'LoadError'
 
@@ -19,8 +20,8 @@ class Source
 
   ### Basic Info ###
 
-  # name is used to prepend events
-  name: null
+  # name is used to prepend events, make sure it is unique
+  name: ''
 
   ### Static Data ###
 
@@ -45,9 +46,9 @@ class Source
     get: ->
       return @_policy
     set: (value) ->
-      @_task.cancel() if @_task
+      @stop()
       @_policy = value
-      @initTask()
+      @start()
 
   # task is the result of calling api's task scheduling
   _task: null
@@ -64,9 +65,9 @@ class Source
 
     @api = config.api if !@api?
 
-    @initTask()
+    @start()
 
-  initTask: ()->
+  start: ()->
     if @api?
       policy = @policy || Policy.Once
       if policy.intervalTime == Infinity
@@ -77,10 +78,19 @@ class Source
       requestAnimationFrame ()=>
         @_load()
 
+  stop: ()->
+    @_task.cancel() if @_task?
+    @_task = null
+
   _load: ()->
+    @policy.unload()
     if @api?
+      @trigger Events.Loading
       success = (res) =>
-        @trigger Events.LoadData, res
+        @policy.load(res).then (data)=>
+          @trigger Events.LoadData, data
+          @data = data
+        , fail
       fail = (res) =>
         @trigger Events.LoadError, res
 
