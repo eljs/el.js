@@ -69,7 +69,7 @@
     Source = crowdcontrol.data.Source;
     api = new crowdcontrol.data.Api('http://localhost:12345');
     policy = new crowdcontrol.data.Policy({ intervalTime: 5000 });
-    streamingPolicy = new crowdcontrol.data.TabularRestfulStreamingPolicy({ intervalTime: 20000 });
+    streamingPolicy = new crowdcontrol.data.TabularRestfulStreamingPolicy({ intervalTime: 10000 });
     TableView = function (superClass) {
       extend(TableView, superClass);
       function TableView() {

@@ -61,14 +61,14 @@ class Source
   _mediator: utils.mediator
 
   constructor: (@options)->
-    @policy = @options.policy || Policy.Once
+    policy = @options.policy || Policy.Once
     delete @options.policy
 
     _.extend @, @options
 
     @api = config.api if !@api?
 
-    @start()
+    @policy = policy
 
   start: ()->
     if @api?
