@@ -5,7 +5,7 @@ api = new crowdcontrol.data.Api 'http://localhost:12345'
 policy = new crowdcontrol.data.Policy
   intervalTime: 5000
 streamingPolicy = new crowdcontrol.data.TabularRestfulStreamingPolicy
-  intervalTime: 10000
+  intervalTime: 20000
 
 class TableView extends View
   name: 'live-table'
@@ -66,7 +66,7 @@ class StreamingTable extends View
           </tr>
         </thead>
         <tbody>
-          <tr each="{ model }" if="{ value != null }" class="animated flipInX">
+          <tr each="{ model }" if="{ value != null }" class="{ animated: true, flipInX: !this.parent.animateOut, flipOutX: this.parent.animateOut }">
             <td><live-content model="{ value }"></td>
           </tr>
           <tr></tr>
@@ -77,6 +77,7 @@ class StreamingTable extends View
   """
   js: ()->
     @loading = false
+    @animateOut = false
 
     src = new Source
       name: 'table2'
@@ -86,8 +87,14 @@ class StreamingTable extends View
 
     src.on Source.Events.Loading, ()=>
       @loading = true
-      @model = []
+      @animateOut = true
       @update()
+
+      setTimeout ()=>
+        @animateOut = false
+        @model = []
+        @update()
+      , 500
 
     src.on Source.Events.LoadDataPartial, (data)=>
       @update()
