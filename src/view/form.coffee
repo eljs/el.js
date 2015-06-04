@@ -7,6 +7,9 @@ View = require './view'
 
 # An InputConfig is used to configure what Form generates
 class InputConfig
+  # name of the property on the model
+  name: ''
+
   # name of the tag for riot to mount for the input
   tag: ''
 
@@ -19,7 +22,7 @@ class InputConfig
   # hints is a space separate list of text descriptors that the predicate should check
   hints: ''
 
-  constructor: (@tag, @default, @placeholder, @hints)->
+  constructor: (@name, @tag, @default, @placeholder, @hints)->
 
 # An Input contains the data for creating an input
 class Input
@@ -87,6 +90,7 @@ helpers =
         (pair)->
           [model, name] = pair
           # on success resolve the value in the model
+          d = Q.defer()
           d.resolve model[name]
           return d.promise
       ]
@@ -99,7 +103,7 @@ helpers =
               model[name] = v
               d = Q.defer()
               d.resolve pair
-              return d
+              return d.promise
 
       validator = (model, name)->
         result = Q([model, name])
@@ -117,7 +121,7 @@ helpers =
           found = true
           break
 
-      if found
+      if !found
         tag = @defaultTagName
 
       model =
@@ -125,7 +129,7 @@ helpers =
         value: inputCfg.default
         placeholder: inputCfg.placeholder
 
-      inputs[inputCfg.name] = new RenderedInput tag, model, validator
+      inputs[inputCfg.name] = new Input tag, model, validator
 
     return inputs
 
@@ -150,18 +154,21 @@ class InputView extends View
   events:
     "#{InputViewEvents.Set}": (name, value) ->
       if name == @model.name
-        model.value = value
+        @model.value = value
+        @update()
 
     "#{InputViewEvents.Error}": (name, message)->
       if name == @model.name
         @setError message
+        @update()
 
     "#{InputViewEvents.ClearError}": (name)->
       if name == @model.name
         @clearError()
+        @update()
 
   mixins:
-    change: (event) =>
+    change: (event) ->
       @obs.trigger InputViewEvents.Change, @model.name, event.target
 
     hasError: ()->
@@ -173,19 +180,21 @@ class InputView extends View
     clearError: ()->
       @setError(null)
 
-  js: ()->
+  js: (opts)->
+    @model = opts.input.model
 
-# The crowdcontrol-input tag takes an Input object as opts and mounts a custom input tag
+# The control tag takes an Input object as opts and mounts a custom input tag
 #  use this tag in your FormView backed html templates to generate the template specified
-#  by form.helper.render output.
+#  by form.helpers.render output.
 #
 #  Passing in the input and the observable which are on the FormView context
 #
-#   Example: <crowdcontrol-input input="{ inputs.email }" obs="{ obs }">
+#   Example: <control input="{ inputs.email }" obs="{ obs }">
 #
-riot.tag "crowdcontrol-input", "", (opts)->
+riot.tag "control", "", (opts)->
   input = opts.input
   obs = opts.obs
+  riot.mount @root, input.tag, opts
 
 #FormView is the base view for a set of form inputs
 class FormView extends View
@@ -201,14 +210,17 @@ class FormView extends View
     return el.value
 
   init: ()->
-    @inputs = helper.render(@inputConfigs) if @inputConfigs?
+    @inputs = helpers.render(@inputConfigs) if @inputConfigs?
 
-  events: ()->
+  events:
     "#{InputViewEvents.Change}": (name, target)->
       input = @inputs[name]
-      input.validator().done ()=>
-        @obs.trigger InputViewEvents.Set name, @model[name]
+      oldValue = @model[name]
+      @model[name] = @view.getValue(target)
+      input.validator(@model, name).done (value)=>
+        @obs.trigger InputViewEvents.Set, name, value
       , (err)=>
+        @model[name] = oldValue
         @obs.trigger InputViewEvents.Error err
 
   js: ()->
@@ -219,6 +231,9 @@ class FormView extends View
 
 module.exports =
   helpers: helpers
+
   FormView: FormView
   InputView: InputView
+
+  Input: Input
   InputConfig: InputConfig

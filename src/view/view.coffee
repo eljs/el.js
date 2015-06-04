@@ -5,7 +5,7 @@ utils = require '../utils'
 
 # A View is a Riot Tag
 class View
-  name: ''
+  tag: ''
   html: ''
   css: ''
   attrs: ''
@@ -20,12 +20,20 @@ class View
 
     @init()
 
-    riot.tag @name, @html, @css, @attrs, (opts)->
+    riot.tag @tag, @html, @css, @attrs, (opts)->
+      # this gets around weird issues with InputView multiplexing
+      # and its interactions with updateOpts in riot
+      optsP = Object.getPrototypeOf(opts)
+      for k, v of opts
+        if optsP[k]? && !v?
+          opts[k] = optsP[k]
+
       @view = view
       view.ctx = @
 
       @model = opts.model
       @model = {} if !@model?
+
 
       obs = @obs = opts.obs
       if !@obs?
@@ -34,7 +42,8 @@ class View
 
       if view.events
         for name, handler of view.events
-          obs.on name, ()=> handler.apply @, arguments
+          do (name, handler) =>
+            obs.on name, ()=> handler.apply @, arguments
 
       _.extend @, view.mixins if view.mixins
 

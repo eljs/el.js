@@ -7,6 +7,9 @@ files =
   js:
     in:  'src/crowdcontrol.coffee'
     out: 'crowdcontrol.js'
+  exampleFormJs:
+    in:  'examples/form/form.coffee'
+    out: 'examples/form/form.js'
   exampleTableJs:
     in:  'examples/table/table.coffee'
     out: 'examples/table/table.js'
@@ -26,6 +29,9 @@ module.exports =
 
   compilers:
     coffee: (src) ->
+      if /examples.form/.test src
+        return "#{requisite} #{files.exampleFormJs.in} -o #{files.exampleFormJs.out}"
+
       if /examples.table/.test src
         return "#{requisite} #{files.exampleTableJs.in} -o #{files.exampleTableJs.out}"
 
