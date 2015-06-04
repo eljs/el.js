@@ -69,5 +69,8 @@ app.get '/polygon', (req, res)->
 app.get '/polygon/:id', bigLag, (req, res)->
   res.send polygons[req.params.id]
 
+app.get '/email/your@email.com', bigLag, (req, res)->
+  res.send { email: 'your@email.com' }
+
 app.listen 12345, ()->
   console.log 'STARTING EXAMPLE SERVER'
