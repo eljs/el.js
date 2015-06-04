@@ -1,4 +1,5 @@
-riot = require 'riot'
+utils = require '../utils'
+riot = utils.shim.riot
 _ = require 'underscore'
 
 Q = require 'q'

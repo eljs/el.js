@@ -1,7 +1,10 @@
-log = require('../src/utils').log
+utils = require('../src/utils')
+log = utils.log
 log.DEBUG = true
 
 mockXhr = require 'xhr2'
+
+utils.shim.riot = require 'riot'
 
 Q = require 'q'
 require('q-xhr')(mockXhr, Q)

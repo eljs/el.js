@@ -1,4 +1,4 @@
-riot = require 'riot'
+riot = require('./shim').riot
 
 mediator = {}
 riot.observable mediator

@@ -1,7 +1,7 @@
-riot = require 'riot'
 _ = require 'underscore'
 
 utils = require '../utils'
+riot = utils.shim.riot
 
 # A View is a Riot Tag
 class View

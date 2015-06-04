@@ -1,5 +1,3 @@
-riot = require 'riot'
-
 Q = require 'q'
 if XMLHttpRequest?
   require('q-xhr')(XMLHttpRequest, Q)
@@ -13,3 +11,4 @@ module.exports =
   observable: (obj)->
     return riot.observable obj
   requestAnimationFrame: require 'raf'
+  riot: riot
