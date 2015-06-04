@@ -1,5 +1,3 @@
-log = require('../src/utils').log
-
 path = require 'path'
 express = require 'express'
 simulateLatency = require('express-simulate-latency')
@@ -72,4 +70,4 @@ app.get '/polygon/:id', bigLag, (req, res)->
   res.send polygons[req.params.id]
 
 app.listen 12345, ()->
-  log.info 'STARTING EXAMPLE SERVER'
+  console.log 'STARTING EXAMPLE SERVER'

@@ -1,4 +1,5 @@
 utils = require '../utils'
+log = utils.log
 riot = utils.shim.riot
 _ = require 'underscore'
 
@@ -58,11 +59,11 @@ helpers =
   errorTag: 'form-error'
 
   # registerValidator takes a predicate of type (InputConfig) -> bool and
-  #  a validatorFn of type (string[property of Object]) -> promise,
+  #  a validatorFn of type (string[property of Object]) -> promise or value/throw error,
   #  resolve using the sanitized value or reject a error message
   registerValidator: (predicate, validatorFn)->
     if _.isFunction(validatorFn)
-      @tagLookup.push new ValidatorCondition(predicate, validatorFn)
+      @validatorLookup.push new ValidatorCondition(predicate, validatorFn)
 
   # registerValidator takes a predicate of type (InputConfig) -> bool and tagName
   registerTag: (predicate, tagName)->
@@ -98,13 +99,15 @@ helpers =
 
       for lookup in @validatorLookup
         if lookup.predicate inputCfg
-          validators.unshift (pair)->
-            [model, name] = pair
-            validatorFn(model, name).then (v)->
-              model[name] = v
-              d = Q.defer()
-              d.resolve pair
-              return d.promise
+          validatorFn = lookup.validatorFn
+          do (validatorFn)->
+            validators.unshift (pair)->
+              [model, name] = pair
+              p = Q(pair).then((pair) -> return validatorFn(pair[0], pair[1])).then (v)->
+                model[name] = v
+                d = Q.defer()
+                d.resolve pair
+                return d.promise
 
       validator = (model, name)->
         result = Q([model, name])
@@ -146,7 +149,9 @@ class InputView extends View
 
   # errorHtml is appended to the normal html for displaying errors
   errorHtml: """
-    <div class="error-message" if="{ hasError() }">{ error }</div>
+    <div class="error-container">
+      <div class="error-message" if="{ hasError() }">{ error }</div>
+    </div>
   """
 
   init: ()->
@@ -155,6 +160,7 @@ class InputView extends View
   events:
     "#{InputViewEvents.Set}": (name, value) ->
       if name == @model.name
+        @clearError()
         @model.value = value
         @update()
 
@@ -173,7 +179,8 @@ class InputView extends View
       @obs.trigger InputViewEvents.Change, @model.name, event.target
 
     hasError: ()->
-      return @error != null && @error.length > 0
+      error = @error
+      return error? && error.length? && error.length > 0
 
     setError: (message)->
       @error = message
@@ -221,8 +228,17 @@ class FormView extends View
       input.validator(@model, name).done (value)=>
         @obs.trigger InputViewEvents.Set, name, value
       , (err)=>
+        log "Validation error has occured", err.stack
         @model[name] = oldValue
-        @obs.trigger InputViewEvents.Error err
+        @obs.trigger InputViewEvents.Error, name, err.message
+
+  mixins:
+    submit: (event)->
+      event.preventDefault()
+
+      validators = []
+      for name, input in @view.inputs
+        validators.push input.validator
 
   js: ()->
     @view.initFormGroup.apply @

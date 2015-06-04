@@ -35,8 +35,74 @@ h3 {
   width: 800px;
 }
 
-example-live-table, example-streaming-table {
+example-live-table, example-streaming-table, example-form {
   position: relative;
+  display: table;
+  width: 100%;
+}
+
+example-form {
+  color: #008181;
+  border: 1px solid #57CFCF;
+}
+
+control {
+  width: 100%;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 10px;
+}
+
+example-form input {
+  width: 70%;
+  float: left;
+  padding: 0 10px;
+  margin: 4px 0 0 0;
+  color: #008181;
+  border: 1px solid #57CFCF;
+  line-height: 2;
+  font-size: 0.8em;
+}
+
+example-form label {
+  text-align: right;
+  padding: 5px 10px;
+  width: 20%;
+  margin-right: 5%;
+  float: left;
+}
+
+.error-container {
+  width: 100%;
+  position: relative;
+  float: left;
+}
+
+.error-message:before {
+  content: ' ';
+  position: absolute;
+  background-color: red;
+  width: 6px;
+  height: 6px;
+  display: block;
+  -ms-transform: rotate(45deg); /* IE 9 */
+  -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+  transform: rotate(45deg);
+  top: -3px;
+  lefT: 20%;
+}
+
+.error-message {
+  position: absolute;
+  color: white;
+  background-color: red;
+  font-size: .8em;
+  padding: 2px 8px;
+  left: 20%;
+}
+
+form {
+  width: 100%;
   display: table;
 }
 

@@ -21,7 +21,7 @@ class View
     @init()
 
     riot.tag @tag, @html, @css, @attrs, (opts)->
-      # this gets around weird issues with InputView multiplexing
+      # This gets around weird issues with InputView multiplexing
       # and its interactions with updateOpts in riot
       optsP = Object.getPrototypeOf(opts)
       for k, v of opts
@@ -34,18 +34,27 @@ class View
       @model = opts.model
       @model = {} if !@model?
 
-
       obs = @obs = opts.obs
       if !@obs?
         obs = @obs = {}
         utils.shim.observable obs
 
-      if view.events
+      if view.events?
         for name, handler of view.events
           do (name, handler) =>
             obs.on name, ()=> handler.apply @, arguments
 
-      _.extend @, view.mixins if view.mixins
+      if view.mixins?
+        for name, fn of view.mixins
+          # Since riot relies on the user setting up closures
+          #  @ is assigned to window when executing functions
+          #  on the context during templating.
+          #
+          #  Therefore mixins need to be fat arrowed.
+          #
+          do (fn) =>
+            @[name] = ()=>
+              fn.apply @, arguments
 
       @view.js.call @, opts
 

@@ -9,6 +9,6 @@ Function::property = (prop, desc) ->
 
 module.exports =
   observable: (obj)->
-    return riot.observable obj
+    return @riot.observable obj
   requestAnimationFrame: require 'raf'
-  riot: riot
+  riot: window.riot if window? || {}
