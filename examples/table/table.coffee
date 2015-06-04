@@ -8,7 +8,7 @@ streamingPolicy = new crowdcontrol.data.TabularRestfulStreamingPolicy
   intervalTime: 20000
 
 class TableView extends View
-  name: 'live-table'
+  name: 'example-live-table'
   html: """
     <div class="{ block: true, loading: loading }">
       <table>
@@ -56,7 +56,7 @@ class ContentView extends View
 new ContentView
 
 class StreamingTable extends View
-  name: 'streaming-table'
+  name: 'example-streaming-table'
   html: """
     <div class="{ block: true, loading: loading }">
       <table>
@@ -99,12 +99,10 @@ class StreamingTable extends View
     src.on Source.Events.LoadDataPartial, (data)=>
       @update()
       @model = data
-      console.log(@model)
 
     src.on Source.Events.LoadData, (data)=>
       @loading = false
       @model = data
-      console.log(@model)
       @update()
 
 new StreamingTable()

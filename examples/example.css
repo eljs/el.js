@@ -35,7 +35,7 @@ h3 {
   width: 800px;
 }
 
-live-table, streaming-table {
+example-live-table, example-streaming-table {
   position: relative;
   display: table;
 }

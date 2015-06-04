@@ -1,3 +1,3 @@
 module.exports =
-  Form: require './form'
+  form: require './form'
   View: require './view'
