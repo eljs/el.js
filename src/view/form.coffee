@@ -12,9 +12,6 @@ class InputConfig
   # name of the property on the model
   name: ''
 
-  # name of the tag for riot to mount for the input
-  tag: ''
-
   # default value of input
   default: ''
 
@@ -24,7 +21,7 @@ class InputConfig
   # hints is a space separate list of text descriptors that the predicate should check
   hints: ''
 
-  constructor: (@name, @tag, @default, @placeholder, @hints)->
+  constructor: (@name, @default='', @placeholder='', @hints = '')->
 
 # An Input contains the data for creating an input
 class Input
@@ -88,52 +85,53 @@ helpers =
       if !inputCfg?
         continue
 
-      validators = [
-        (pair)->
+      validators = []
+
+      do (validators)=>
+        for lookup in @validatorLookup
+          if lookup.predicate inputCfg
+            validatorFn = lookup.validatorFn
+            do (validatorFn)->
+              validators.push (pair)->
+                [model, name] = pair
+                p = Q(pair).then((pair) -> return validatorFn(pair[0], pair[1])).then (v)->
+                  model[name] = v
+                  d = Q.defer()
+                  d.resolve pair
+                  return d.promise
+
+        validators.push (pair)->
           [model, name] = pair
           # on success resolve the value in the model
           d = Q.defer()
           d.resolve model[name]
           return d.promise
-      ]
 
-      for lookup in @validatorLookup
-        if lookup.predicate inputCfg
-          validatorFn = lookup.validatorFn
-          do (validatorFn)->
-            validators.unshift (pair)->
-              [model, name] = pair
-              p = Q(pair).then((pair) -> return validatorFn(pair[0], pair[1])).then (v)->
-                model[name] = v
-                d = Q.defer()
-                d.resolve pair
-                return d.promise
+        validator = (model, name)->
+          result = Q([model, name])
+          for validatorFn in validators
+            result = result.then(validatorFn)
+          return result
 
-      validator = (model, name)->
-        result = Q([model, name])
-        for validatorFn in validators
-          result = result.then(validatorFn)
-        return result
+        found = false
+        for lookup in @tagLookup
+          if !lookup?
+            continue
 
-      found = false
-      for lookup in @tagLookup
-        if !lookup?
-          continue
+          if lookup.predicate inputCfg
+            tag = lookup.tagName
+            found = true
+            break
 
-        if lookup.predicate inputCfg
-          tag = lookup.tagName
-          found = true
-          break
+        if !found
+          tag = @defaultTagName
 
-      if !found
-        tag = @defaultTagName
+        model =
+          name: inputCfg.name
+          value: inputCfg.default
+          placeholder: inputCfg.placeholder
 
-      model =
-        name: inputCfg.name
-        value: inputCfg.default
-        placeholder: inputCfg.placeholder
-
-      inputs[inputCfg.name] = new Input tag, model, validator
+        inputs[inputCfg.name] = new Input tag, model, validator
 
     return inputs
 
@@ -149,8 +147,8 @@ class InputView extends View
 
   # errorHtml is appended to the normal html for displaying errors
   errorHtml: """
-    <div class="error-container">
-      <div class="error-message" if="{ hasError() }">{ error }</div>
+    <div class="error-container" if="{ hasError() }">
+      <div class="error-message">{ error }</div>
     </div>
   """
 
@@ -204,8 +202,14 @@ riot.tag "control", "", (opts)->
   obs = opts.obs
   riot.mount @root, input.tag, opts
 
+FormViewEvents =
+  Submit: 'submit'
+  SubmitFailed: 'submit-failed'
+
 #FormView is the base view for a set of form inputs
 class FormView extends View
+  @Events: FormViewEvents
+
   # inputConfigs is an array of InputConfig objects
   inputConfigs: null
 
@@ -219,9 +223,13 @@ class FormView extends View
 
   init: ()->
     @inputs = helpers.render(@inputConfigs) if @inputConfigs?
+    # controls which submit route we take
+    @fullyValidated = false
 
   events:
     "#{InputViewEvents.Change}": (name, target)->
+      @fullyValidated = false
+
       input = @inputs[name]
       oldValue = @model[name]
       @model[name] = @view.getValue(target)
@@ -234,11 +242,36 @@ class FormView extends View
 
   mixins:
     submit: (event)->
+      # do a real submit
+      if @fullyValidated
+        return true
+
+      # otherwise do validation
       event.preventDefault()
 
-      validators = []
-      for name, input in @view.inputs
-        validators.push input.validator
+      names = []
+      promises = []
+      for name, input of @view.inputs
+        names.push name
+        promises.push input.validator(@model, name)
+
+      Q.allSettled(promises).done (results)=>
+        rejected = false
+        for result, i in results
+          if result.state == 'rejected'
+            rejected = true
+            @obs.trigger InputViewEvents.Error, names[i], result.reason.message
+
+        if rejected
+          @obs.trigger FormViewEvents.SubmitFailed, @model
+          return
+
+        @fullyValidated = true
+        @obs.trigger FormViewEvents.Submit, @model
+        @view.submit()
+
+  submit: ()->
+    # overwrite with real submit here
 
   js: ()->
     @view.initFormGroup.apply @

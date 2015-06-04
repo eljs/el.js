@@ -10,9 +10,15 @@ crowdcontrol.utils.log.DEBUG = true
 
 api = new crowdcontrol.data.Api 'http://localhost:12345'
 
+helpers.defaultTagName = 'basic-input'
+
+# validation
 helpers.registerTag ((inputCfg)-> return inputCfg.hints.indexOf('email') >= 0), 'email-input'
 helpers.registerValidator ((inputCfg) -> return inputCfg.hints.indexOf('email') >= 0), (model, name)->
-  value = model[name].trim().toLowerCase()
+  value = model[name]
+  throw new Error "Enter a valid email" if !value?
+
+  value = value.trim().toLowerCase()
   re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
   if value.match(re)
     return value
@@ -27,25 +33,37 @@ helpers.registerValidator ((inputCfg) -> return inputCfg.hints.indexOf('email') 
       return value
   throw new Error "Email cannot be empty"
 
-class EmailInputView extends InputView
-  tag: 'email-input'
+# views
+class BasicInputView extends InputView
+  tag: 'basic-input'
   html: """
     <label __for="{ model.name }">{ model.name }</label>
     <input id="{ model.name }" name="{ model.name }" type="text" onchange="{ change }" onblur="{ change }" value="{ model.value }" placeholder="{ model.placeholder }"></input>
   """
+new BasicInputView
+
+class EmailInputView extends BasicInputView
+  tag: 'email-input'
 
 new EmailInputView
 
 class ExampleFormView extends FormView
   inputConfigs:[
-    new InputConfig 'email', 'email-input', '', 'Anything but your@email.com', 'email'
+    new InputConfig 'email', '', 'Anything but your@email.com', 'email'
+    new InputConfig 'basic', '', 'No Validation On This One'
   ]
   tag: 'example-form'
   html: """
-    <form>
-      <control input="{ inputs.email }" obs="{ obs }">
+    <form onsubmit="{ submit }">
+      <control input="{ inputs.email }" obs="{ obs }"></control>
+      <control input="{ inputs.basic }" obs="{ obs }"></control>
+      <button type="submit">Submit</button>
     </form>
   """
+
+  submit: ()->
+    $(@ctx.root).find('form').submit()
+
 
 new ExampleFormView
 

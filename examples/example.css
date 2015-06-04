@@ -44,12 +44,12 @@ example-live-table, example-streaming-table, example-form {
 example-form {
   color: #008181;
   border: 1px solid #57CFCF;
+  padding: 10px;
 }
 
 control {
   width: 100%;
-  display: table-cell;
-  vertical-align: middle;
+  display: inline-block;
   padding: 10px;
 }
 
@@ -62,6 +62,16 @@ example-form input {
   border: 1px solid #57CFCF;
   line-height: 2;
   font-size: 0.8em;
+}
+
+example-form button {
+  display: block;
+  margin: auto;
+  border: 1px solid #57CFCF;
+  padding: 5px 20px 8px 20px;
+  color: #008181;
+  background-color: white;
+  font-size: 1.2em;
 }
 
 example-form label {
@@ -103,7 +113,6 @@ example-form label {
 
 form {
   width: 100%;
-  display: table;
 }
 
 table, tr, th, td, td * {
