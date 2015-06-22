@@ -8,7 +8,7 @@ InputConfig = crowdcontrol.view.form.InputConfig
 
 crowdcontrol.utils.log.DEBUG = true
 
-api = new crowdcontrol.data.Api 'http://localhost:12345'
+api = new crowdcontrol.data.Api 'http://localhost:12345', ''
 
 helpers.defaultTagName = 'basic-input'
 

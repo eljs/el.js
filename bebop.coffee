@@ -5,7 +5,7 @@ requisite = 'node_modules/.bin/requisite -g'
 
 files =
   js:
-    in:  'src/crowdcontrol.coffee'
+    in:  'src/index.coffee'
     out: 'crowdcontrol.js'
   exampleFormJs:
     in:  'examples/form/form.coffee'

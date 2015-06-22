@@ -29,6 +29,10 @@ class Api
   constructor: (@url, @token)->
     @scheduledTasks = []
 
+    url = @url
+    if url[url.length-1] == '/'
+      @url = url.substring 0, url.length - 1
+
     # make this the default api if none is provided
     config.api = @ if !config.api?
 
@@ -40,27 +44,50 @@ class Api
   get:    (path)->
     if path[0] != '/'
       p = '/' + path
-    return Q.xhr.get @url + p
+    return Q.xhr
+      method: 'GET'
+      headers:
+        Authorization: @token
+      url: @url + p
 
   post:   (path, data)->
     if path[0] != '/'
       p = '/' + path
-    return Q.xhr.post @url + p, data
+    return Q.xhr
+      method: 'POST'
+      headers:
+        Authorization: @token
+      url: @url + p
+      data: data
 
   put:    (path, data)->
     if path[0] != '/'
       p = '/' + path
-    return Q.xhr.put @url + p, data
+    return Q.xhr
+      method: 'PUT'
+      headers:
+        Authorization: @token
+      url: @url + p
+      data: data
 
   patch:  (path, data)->
     if path[0] != '/'
       p = '/' + path
-    return Q.xhr.patch @url + p, data
+    return Q.xhr
+      method: 'PATCH'
+      headers:
+        Authorization: @token
+      url: @url + p
+      data: data
 
   delete: (path)->
     if path[0] != '/'
       p = '/' + path
-    return Q.xhr.delete @url + p
+    return Q.xhr
+      method: 'DELETE'
+      headers:
+        Authorization: @token
+      url: @url + p
 
   # scheduleOnce starts (if not started) the event loop and adds a function to
   #  the queue to be executed in some milliseconds
