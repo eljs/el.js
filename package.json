@@ -4,7 +4,7 @@
   "description": "Riot helpers for crowdstart",
   "main": "lib/index.js",
   "scripts": {
-    "prepublish": "cake build",
+    "prepublish": "cake build && cake build-min",
     "test": "cake test"
   },
   "keywords": [

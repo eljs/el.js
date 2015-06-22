@@ -228,11 +228,17 @@ class FormView extends View
 
   events:
     "#{InputViewEvents.Change}": (name, target)->
-      @fullyValidated = false
-
-      input = @inputs[name]
+      newValue = @view.getValue(target)
       oldValue = @model[name]
-      @model[name] = @view.getValue(target)
+
+      if oldValue == newValue
+        @obs.trigger InputViewEvents.ClearError, name
+        return
+
+      @fullyValidated = false
+      @model[name] = newValue
+      input = @inputs[name]
+
       input.validator(@model, name).done (value)=>
         @obs.trigger InputViewEvents.Set, name, value
       , (err)=>
