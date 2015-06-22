@@ -2,7 +2,7 @@
   "name": "crowdcontrol",
   "version": "1.0.1",
   "description": "Riot helpers for crowdstart",
-  "main": "crowdcontrol.js",
+  "main": "lib/index.js",
   "scripts": {
     "prepublish": "cake build && cake build-min",
     "test": "cake test"
