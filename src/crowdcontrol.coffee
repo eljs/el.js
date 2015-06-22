@@ -1,7 +1,7 @@
 module.exports =
-  data: require './data/index.coffee'
-  utils: require './utils/index.coffee'
-  view: require './view/index.coffee'
+  data: require './data/index'
+  utils: require './utils/index'
+  view: require './view/index'
   start: ()->
     @utils.shim.riot.mount('*')
 
