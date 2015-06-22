@@ -145,6 +145,10 @@ InputViewEvents =
 class InputView extends View
   @Events: InputViewEvents
 
+  # getValue converts the element firing the event to a single value
+  getValue: (el)->
+    return el.value
+
   # errorHtml is appended to the normal html for displaying errors
   errorHtml: """
     <div class="error-container" if="{ hasError() }">
@@ -174,7 +178,8 @@ class InputView extends View
 
   mixins:
     change: (event) ->
-      @obs.trigger InputViewEvents.Change, @model.name, event.target
+      newValue = @view.getValue(event.target)
+      @obs.trigger InputViewEvents.Change, @model.name, newValue
 
     hasError: ()->
       error = @error
@@ -217,18 +222,13 @@ class FormView extends View
   #  usually generated form inputConfigs
   inputs: {}
 
-  # getValue converts the element firing the event to a single value
-  getValue: (el)->
-    return el.value
-
   init: ()->
     @inputs = helpers.render(@inputConfigs) if @inputConfigs?
     # controls which submit route we take
     @fullyValidated = false
 
   events:
-    "#{InputViewEvents.Change}": (name, target)->
-      newValue = @view.getValue(target)
+    "#{InputViewEvents.Change}": (name, newValue)->
       oldValue = @model[name]
 
       if oldValue == newValue
