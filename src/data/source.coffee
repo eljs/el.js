@@ -1,7 +1,7 @@
 _ = require 'underscore'
 Q = require 'q'
 
-config = '../config'
+config = require '../config'
 
 utils = require '../utils'
 requestAnimationFrame = utils.shim.requestAnimationFrame

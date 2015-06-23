@@ -20,10 +20,9 @@ class View
     proto = Object.getPrototypeOf @
     parentProto = proto
     while parentProto != View.prototype
-      parentProto = Object.getPrototypeOf proto
+      parentProto = Object.getPrototypeOf parentProto
       proto.events = _.extend parentProto.events, proto.events
       proto.mixins = _.extend parentProto.mixins, proto.mixins
-      proto = parentProto
 
     view = @
 
