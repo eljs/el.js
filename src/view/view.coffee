@@ -16,6 +16,10 @@ class View
   constructor: (@options)->
     _.extend @, @options
 
+    parentProto = Object.getPrototypeOf @
+    @events = _.extend {}, @events, parentProto.events
+    @mixins = _.extend {}, @mixins, parentProto.mixins
+
     view = @
 
     @init()
