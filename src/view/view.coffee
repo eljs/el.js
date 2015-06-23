@@ -18,8 +18,8 @@ class View
 
     proto = Object.getPrototypeOf @
     parentProto = Object.getPrototypeOf proto
-    _.extend proto.events, parentProto.events
-    _.extend proto.mixins, parentProto.mixins
+    proto.events = _.extend proto.events, parentProto.events
+    proto.mixins = _.extend proto.mixins, parentProto.mixins
 
     view = @
 
