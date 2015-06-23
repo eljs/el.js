@@ -11,15 +11,19 @@ class View
   attrs: ''
   events: null
   mixins: null
+  model: null
   js: ()->
 
   constructor: (@options)->
     _.extend @, @options
 
     proto = Object.getPrototypeOf @
-    parentProto = Object.getPrototypeOf proto
-    proto.events = _.extend parentProto.events, proto.events
-    proto.mixins = _.extend parentProto.mixins, proto.mixins
+    parentProto = proto
+    while parentProto != View.prototype
+      parentProto = Object.getPrototypeOf proto
+      proto.events = _.extend parentProto.events, proto.events
+      proto.mixins = _.extend parentProto.mixins, proto.mixins
+      proto = parentProto
 
     view = @
 
@@ -36,7 +40,9 @@ class View
       @view = view
       view.ctx = @
 
-      @model = opts.model
+      # opts model takes precedence over model on view
+      #  it is simpler to override rather than
+      @model = opts.model || view.model
       @model = {} if !@model?
 
       obs = @obs = opts.obs

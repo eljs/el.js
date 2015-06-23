@@ -283,7 +283,10 @@ class FormView extends View
     @view.initFormGroup.apply @
 
   initFormGroup: ()->
-    @inputs = @view.inputs
+    @inputs = inputs = @view.inputs
+    for key, value of @model
+      if inputs[key]?
+        inputs[key].model.value = value
 
 module.exports =
   helpers: helpers

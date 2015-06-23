@@ -54,6 +54,8 @@ class ExampleFormView extends FormView
     new InputConfig 'email', '', 'Anything but your@email.com', 'email'
     new InputConfig 'basic', '', 'No Validation On This One'
   ]
+  model:
+    basic: "This is prefilled!"
   tag: 'example-form'
   html: """
     <form onsubmit="{ submit }">
