@@ -164,7 +164,6 @@ class InputView extends View
       if name == @model.name
         @clearError()
         @model.value = value
-        @lastValue = value
         @update()
 
     "#{InputViewEvents.Error}": (name, message)->
@@ -179,10 +178,10 @@ class InputView extends View
 
   mixins:
     change: (event) ->
-      newValue = @view.getValue(event.target)
-      if newValue != @lastValue
+      value = @view.getValue(event.target)
+      if value != @model.value
         @obs.trigger InputViewEvents.Change, @model.name, newValue
-      @lastValue = newValue
+      @model.value = value
 
     hasError: ()->
       error = @error
@@ -228,8 +227,6 @@ class FormView extends View
 
   events:
     "#{InputViewEvents.Change}": (name, newValue)->
-      oldValue = @model[name]
-
       @fullyValidated = false
       @model[name] = newValue
       input = @inputs[name]
@@ -238,14 +235,14 @@ class FormView extends View
         @obs.trigger InputViewEvents.Set, name, value
       , (err)=>
         log "Validation error has occured", err.stack
-        @model[name] = oldValue
         @obs.trigger InputViewEvents.Error, name, err.message
 
   mixins:
     submit: (event)->
       # do a real submit
       if @fullyValidated
-        return true
+        @view.submit()
+        return
 
       # otherwise do validation
       event.preventDefault()
