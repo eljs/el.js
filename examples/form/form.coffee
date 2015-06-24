@@ -51,21 +51,23 @@ class ExampleFormView extends FormView
   inputConfigs:[
     new InputConfig 'email', '', 'Anything but your@email.com', 'email'
     new InputConfig 'basic', '', 'No Validation On This One'
+    new InputConfig 'example.nested.structure.42', '', 'Example Nested Object'
   ]
   model:
     basic: "This is prefilled!"
   tag: 'example-form'
   html: """
     <form onsubmit="{ submit }">
-      <control input="{ inputs.email }" obs="{ obs }"></control>
-      <control input="{ inputs.basic }" obs="{ obs }"></control>
+      <control input="{ inputs.email }"></control>
+      <control input="{ inputs.basic }"></control>
+      <control input="{ inputs['example.nested.structure.42'] }"></control>
       <button type="submit">Submit</button>
     </form>
   """
 
   submit: ()->
-    $(@ctx.root).find('form').submit()
-
+    console.log @ctx.model
+    alert 'Success!'
 
 new ExampleFormView
 

@@ -34,6 +34,9 @@ class Input
   # validator for validating the input value, takes a model, name on the model, and returns a promise
   validator: ()->
 
+  # obs object for event capture, set by form view
+  obs: null
+
   constructor: (@tag, @model, @validator)->
 
 class ValidatorCondition
@@ -207,7 +210,7 @@ class InputView extends View
 riot.tag "control", "", (opts)->
   input = opts.input
   if input?
-    obs = opts.obs
+    opts.obs = input.obs
     riot.mount @root, input.tag, opts
 
 FormViewEvents =
@@ -228,10 +231,10 @@ class FormView extends View
   events:
     "#{InputViewEvents.Change}": (name, newValue)->
       @fullyValidated = false
-      @model[name] = newValue
+      [model, lastName] = @view.set @model, name, newValue
       input = @inputs[name]
 
-      input.validator(@model, name).done (value)=>
+      input.validator(model, lastName).done (value)=>
         @obs.trigger InputViewEvents.Set, name, value
       , (err)=>
         log "Validation error has occured", err.stack
@@ -271,15 +274,44 @@ class FormView extends View
   submit: ()->
     # overwrite with real submit here
 
+  set: (model, path, value)->
+    # expand names that are paths
+    names = path.split '.'
+
+    if names.length == 1
+      model[path] = value
+      return [model, path]
+
+    lastName = names.pop()
+
+    currentObject = model
+    for name in names
+      if currentObject[name]?
+        currentObject = currentObject[name]
+        continue
+
+      if _.isNumber name
+        currentObject[name] = []
+      else
+        currentObject[name] = {}
+
+      currentObject = currentObject[name]
+
+    currentObject[lastName] = value
+    return [currentObject, lastName]
+
   js: ()->
     @view.initFormGroup.apply @
 
   initFormGroup: ()->
     if @view.inputConfigs?
       if !@inputs?
-        @inputs = inputs = helpers.render(@view.inputConfigs)
+        @inputs = inputs = helpers.render @view.inputConfigs
       else
         inputs = @inputs
+
+      for key, input of inputs
+        input.obs = @obs
 
       # controls which submit route we take
       @fullyValidated = false
