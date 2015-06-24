@@ -180,7 +180,7 @@ class InputView extends View
     change: (event) ->
       value = @view.getValue(event.target)
       if value != @model.value
-        @obs.trigger InputViewEvents.Change, @model.name, newValue
+        @obs.trigger InputViewEvents.Change, @model.name, value
       @model.value = value
 
     hasError: ()->
