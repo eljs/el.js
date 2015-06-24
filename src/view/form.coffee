@@ -279,7 +279,10 @@ class FormView extends View
 
   initFormGroup: ()->
     if @view.inputConfigs?
-      @inputs = inputs = helpers.render(@view.inputConfigs)
+      if !@inputs?
+        @inputs = inputs = helpers.render(@view.inputConfigs)
+      else
+        input = @inputs
 
       # controls which submit route we take
       @fullyValidated = false
