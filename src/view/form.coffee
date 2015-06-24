@@ -204,8 +204,9 @@ class InputView extends View
 #
 riot.tag "control", "", (opts)->
   input = opts.input
-  obs = opts.obs
-  riot.mount @root, input.tag, opts
+  if input?
+    obs = opts.obs
+    riot.mount @root, input.tag, opts
 
 FormViewEvents =
   Submit: 'submit'
