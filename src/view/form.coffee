@@ -228,7 +228,6 @@ class FormView extends View
       oldValue = @model[name]
 
       if oldValue == newValue
-        @obs.trigger InputViewEvents.ClearError, name
         return
 
       @fullyValidated = false
