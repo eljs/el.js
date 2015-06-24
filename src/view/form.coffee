@@ -282,7 +282,7 @@ class FormView extends View
       if !@inputs?
         @inputs = inputs = helpers.render(@view.inputConfigs)
       else
-        input = @inputs
+        inputs = @inputs
 
       # controls which submit route we take
       @fullyValidated = false
