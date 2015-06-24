@@ -220,12 +220,7 @@ class FormView extends View
 
   # inputs is a map of input names to Input objects
   #  usually generated form inputConfigs
-  inputs: {}
-
-  init: ()->
-    @inputs = helpers.render(@inputConfigs) if @inputConfigs?
-    # controls which submit route we take
-    @fullyValidated = false
+  # ctx.inputs: {}
 
   events:
     "#{InputViewEvents.Change}": (name, newValue)->
@@ -257,7 +252,7 @@ class FormView extends View
 
       names = []
       promises = []
-      for name, input of @view.inputs
+      for name, input of @inputs
         names.push name
         promises.push input.validator(@model, name)
 
@@ -283,10 +278,15 @@ class FormView extends View
     @view.initFormGroup.apply @
 
   initFormGroup: ()->
-    @inputs = inputs = @view.inputs
-    for key, value of @model
-      if inputs[key]?
-        inputs[key].model.value = value
+    if @view.inputConfigs?
+      @inputs = inputs = helpers.render(@view.inputConfigs)
+
+      # controls which submit route we take
+      @fullyValidated = false
+
+      for key, value of @model
+        if inputs[key]?
+          inputs[key].model.value = value
 
 module.exports =
   helpers: helpers
