@@ -51,16 +51,20 @@ class ExampleFormView extends FormView
   inputConfigs:[
     new InputConfig 'email', '', 'Anything but your@email.com', 'email'
     new InputConfig 'basic', '', 'No Validation On This One'
-    new InputConfig 'example.nested.structure.42', '', 'Example Nested Object'
+    new InputConfig 'example.nested.structure.1', '', 'Example Nested Object'
   ]
   model:
     basic: "This is prefilled!"
+    example:
+      nested:
+        structure:
+          ["Should not see", "This is also prefilled!"]
   tag: 'example-form'
   html: """
     <form onsubmit="{ submit }">
       <control input="{ inputs.email }"></control>
       <control input="{ inputs.basic }"></control>
-      <control input="{ inputs['example.nested.structure.42'] }"></control>
+      <control input="{ inputs['example.nested.structure.1'] }"></control>
       <button type="submit">Submit</button>
     </form>
   """

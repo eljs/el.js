@@ -231,7 +231,7 @@ class FormView extends View
   events:
     "#{InputViewEvents.Change}": (name, newValue)->
       @fullyValidated = false
-      [model, lastName] = @view.set @model, name, newValue
+      [model, lastName] = @view._set @model, name, newValue
       input = @inputs[name]
 
       input.validator(model, lastName).done (value)=>
@@ -274,7 +274,22 @@ class FormView extends View
   submit: ()->
     # overwrite with real submit here
 
-  set: (model, path, value)->
+  _get: (model, path)->
+    names = path.split '.'
+
+    if names.length == 1
+      return model[path]
+
+    currentObject = model
+    for name in names
+      if !currentObject[name]?
+        return undefined
+
+      currentObject = currentObject[name]
+
+    return currentObject[lastName]
+
+  _set: (model, path, value)->
     # expand names that are paths
     names = path.split '.'
 
@@ -316,9 +331,17 @@ class FormView extends View
       # controls which submit route we take
       @fullyValidated = false
 
-      for key, value of @model
+      # asssumes model is object
+      traverse @model, (key, value)->
         if inputs[key]?
           inputs[key].model.value = value
+
+traverse = (obj, fn, key = '')->
+  if _.isArray(obj) || _.isObject(obj)
+    for k, v of obj
+      traverse v, fn, if key == '' then k else (key + '.') + k
+  else
+    fn key, obj
 
 module.exports =
   helpers: helpers
