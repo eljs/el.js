@@ -139,6 +139,7 @@ helpers =
     return inputs
 
 InputViewEvents =
+  Result: 'input-result'
   Get: 'input-get'
   Set: 'input-set'
   Change: 'input-change'
@@ -231,7 +232,7 @@ class FormView extends View
 
   events:
     "#{InputViewEvents.Get}": (name)->
-      return @view._get @model, name
+      @obs.trigger InputViewEvents.Result, (@view._get @model, name)
 
     "#{InputViewEvents.Change}": (name, newValue)->
       @fullyValidated = false
