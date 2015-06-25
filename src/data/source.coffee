@@ -10,10 +10,11 @@ log = utils.log
 Policy = require('./policy').Policy
 
 Events =
-  Loading: 'Loading'
-  LoadData: 'LoadData'
-  LoadError: 'LoadError'
-  LoadDataPartial: 'LoadDataPartial'
+  Reload: 'source-reload'
+  Loading: 'source-loading'
+  LoadData: 'source-load-data'
+  LoadError: 'source-load-error'
+  LoadDataPartial: 'source-load-data-partial'
 
 # A Source serves data either from the backend or from a backing set of data
 class Source
@@ -69,6 +70,9 @@ class Source
     @api = config.api if !@api?
 
     @policy = policy
+
+    @on Events.Reload, ()=>
+      @_load()
 
   start: ()->
     if @api?
