@@ -139,10 +139,11 @@ helpers =
     return inputs
 
 InputViewEvents =
-  Set: 'set'
-  Change: 'change'
-  Error: 'error'
-  ClearError: 'clear-error'
+  Get: 'input-get'
+  Set: 'input-set'
+  Change: 'input-change'
+  Error: 'input-error'
+  ClearError: 'input-clear-error'
 
 #InputView is the base view for form inputs
 class InputView extends View
@@ -214,8 +215,8 @@ riot.tag "control", "", (opts)->
     riot.mount @root, input.tag, opts
 
 FormViewEvents =
-  Submit: 'submit'
-  SubmitFailed: 'submit-failed'
+  Submit: 'form-submit'
+  SubmitFailed: 'form-submit-failed'
 
 #FormView is the base view for a set of form inputs
 class FormView extends View
@@ -229,6 +230,9 @@ class FormView extends View
   # ctx.inputs: {}
 
   events:
+    "#{InputViewEvents.Get}": (name)->
+      return @view._get @model, name
+
     "#{InputViewEvents.Change}": (name, newValue)->
       @fullyValidated = false
       [model, lastName] = @view._set @model, name, newValue
