@@ -21,8 +21,8 @@ class View
     parentProto = proto
     while parentProto != View.prototype
       parentProto = Object.getPrototypeOf parentProto
-      proto.events = _.extend parentProto.events || {}, proto.events
-      proto.mixins = _.extend parentProto.mixins || {}, proto.mixins
+      proto.events = _.extend {}, parentProto.events || {}, proto.events
+      proto.mixins = _.extend {}, parentProto.mixins || {}, proto.mixins
 
     view = @
 
