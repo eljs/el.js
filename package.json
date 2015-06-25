@@ -1,6 +1,6 @@
 {
   "name": "crowdcontrol",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "Riot helpers for crowdstart",
   "main": "lib/index.js",
   "scripts": {
