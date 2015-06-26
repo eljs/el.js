@@ -69,9 +69,10 @@ class ExampleFormView extends FormView
     </form>
   """
 
-  submit: ()->
-    console.log @model
-    alert 'Success!'
+  submit: (event)->
+    if super
+      console.log @model
+      alert 'Success!'
 
 ExampleFormView.register()
 
