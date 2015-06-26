@@ -181,22 +181,21 @@ class InputView extends View
         @clearError()
         @update()
 
-  mixins:
-    change: (event) ->
-      value = @view.getValue(event.target)
-      if value != @model.value
-        @obs.trigger InputViewEvents.Change, @model.name, value
-      @model.value = value
+  change: (event) ->
+    value = @getValue(event.target)
+    if value != @model.value
+      @obs.trigger InputViewEvents.Change, @model.name, value
+    @model.value = value
 
-    hasError: ()->
-      error = @error
-      return error? && error.length? && error.length > 0
+  hasError: ()->
+    error = @error
+    return error? && error.length? && error.length > 0
 
-    setError: (message)->
-      @error = message
+  setError: (message)->
+    @error = message
 
-    clearError: ()->
-      @setError(null)
+  clearError: ()->
+    @setError(null)
 
   js: (opts)->
     @model = opts.input.model
@@ -232,11 +231,11 @@ class FormView extends View
 
   events:
     "#{InputViewEvents.Get}": (name)->
-      @obs.trigger InputViewEvents.Result, (@view._get @model, name)
+      @obs.trigger InputViewEvents.Result, (@_get @model, name)
 
     "#{InputViewEvents.Change}": (name, newValue)->
       @fullyValidated = false
-      [model, lastName] = @view._set @model, name, newValue
+      [model, lastName] = @_set @model, name, newValue
       input = @inputs[name]
 
       input.validator(model, lastName).done (value)=>
@@ -245,39 +244,36 @@ class FormView extends View
         log "Validation error has occured", err.stack
         @obs.trigger InputViewEvents.Error, name, err.message
 
-  mixins:
-    submit: (event)->
-      # do a real submit
-      if @fullyValidated
-        @view.submit()
+  submit: (event)->
+    # do a real submit
+    if @fullyValidated
+      return true
+
+    # otherwise do validation
+    event.preventDefault()
+
+    names = []
+    promises = []
+    for name, input of @inputs
+      names.push name
+      promises.push input.validator(@model, name)
+
+    Q.allSettled(promises).done (results)=>
+      rejected = false
+      for result, i in results
+        if result.state == 'rejected'
+          rejected = true
+          @obs.trigger InputViewEvents.Error, names[i], result.reason.message
+
+      if rejected
+        @obs.trigger FormViewEvents.SubmitFailed, @model
         return
 
-      # otherwise do validation
-      event.preventDefault()
+      @fullyValidated = true
+      @obs.trigger FormViewEvents.Submit, @model
+      @submit()
 
-      names = []
-      promises = []
-      for name, input of @inputs
-        names.push name
-        promises.push input.validator(@model, name)
-
-      Q.allSettled(promises).done (results)=>
-        rejected = false
-        for result, i in results
-          if result.state == 'rejected'
-            rejected = true
-            @obs.trigger InputViewEvents.Error, names[i], result.reason.message
-
-        if rejected
-          @obs.trigger FormViewEvents.SubmitFailed, @model
-          return
-
-        @fullyValidated = true
-        @obs.trigger FormViewEvents.Submit, @model
-        @view.submit()
-
-  submit: ()->
-    # overwrite with real submit here
+    return false
 
   _get: (model, path)->
     names = path.split '.'
@@ -321,12 +317,12 @@ class FormView extends View
     return [currentObject, lastName]
 
   js: ()->
-    @view.initFormGroup.apply @
+    @initFormGroup()
 
   initFormGroup: ()->
-    if @view.inputConfigs?
+    if @inputConfigs?
       if !@inputs?
-        @inputs = inputs = helpers.render @view.inputConfigs
+        @inputs = inputs = helpers.render @inputConfigs
       else
         inputs = @inputs
 

@@ -5,6 +5,9 @@ riot = utils.shim.riot
 
 # A View is a Riot Tag
 class View
+  @register: ()->
+    new @
+
   tag: ''
   html: ''
   css: ''
@@ -14,15 +17,17 @@ class View
   model: null
   js: ()->
 
-  constructor: (@options)->
-    _.extend @, @options
-
+  constructor: ()->
     proto = Object.getPrototypeOf @
     parentProto = proto
+    temp = {}
+
     while parentProto != View.prototype
       parentProto = Object.getPrototypeOf parentProto
       proto.events = _.extend {}, parentProto.events || {}, proto.events
-      proto.mixins = _.extend {}, parentProto.mixins || {}, proto.mixins
+      _.extend temp, parentProto || {}, proto
+
+    _.extend proto, temp
 
     view = @
 
@@ -36,12 +41,44 @@ class View
         if optsP[k]? && !v?
           opts[k] = optsP[k]
 
-      @view = view
-      view.ctx = @
+      if view?
+        for k, v of Object.getPrototypeOf view
+          # Since riot relies on the user setting up closures
+          #  @ is assigned to window when executing functions
+          #  on the context during templating.
+          #
+          #  Therefore mixins need to be fat arrowed.
+          #
+          # Mind the reserved keywords
+          #  on
+          #  off
+          #  one
+          #  trigger
+          #  tags
+          #  mount
+          #  unmount
+          #  view
+          #  model
+          #  obs
+          #  root
+          #
+
+          if _.isFunction(v)
+            do (v) =>
+              if @[k]?
+                oldFn = @[k]
+                @[k] = ()=>
+                  oldFn.apply @, arguments
+                  return v.apply @, arguments
+              else
+                @[k] = ()=>
+                  return v.apply @, arguments
+          else
+            @[k] = v
 
       # opts model takes precedence over model on view
       #  it is simpler to override rather than
-      @model = opts.model || view.model
+      @model = opts.model || @model
       @model = {} if !@model?
 
       obs = @obs = opts.obs
@@ -54,19 +91,7 @@ class View
           do (name, handler) =>
             obs.on name, ()=> handler.apply @, arguments
 
-      if view.mixins?
-        for name, fn of view.mixins
-          # Since riot relies on the user setting up closures
-          #  @ is assigned to window when executing functions
-          #  on the context during templating.
-          #
-          #  Therefore mixins need to be fat arrowed.
-          #
-          do (fn) =>
-            @[name] = ()=>
-              fn.apply @, arguments
-
-      @view.js.call @, opts
+      @js(opts) if @js
 
   init: ()->
 

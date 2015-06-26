@@ -40,12 +40,12 @@ class BasicInputView extends InputView
     <label __for="{ model.name }">{ model.name }</label>
     <input id="{ model.name }" name="{ model.name }" type="text" onchange="{ change }" onblur="{ change }" value="{ model.value }" placeholder="{ model.placeholder }"></input>
   """
-new BasicInputView
+BasicInputView.register()
 
 class EmailInputView extends BasicInputView
   tag: 'email-input'
 
-new EmailInputView
+EmailInputView.register()
 
 class ExampleFormView extends FormView
   inputConfigs:[
@@ -70,8 +70,8 @@ class ExampleFormView extends FormView
   """
 
   submit: ()->
-    console.log @ctx.model
+    console.log @model
     alert 'Success!'
 
-new ExampleFormView
+ExampleFormView.register()
 

@@ -44,7 +44,7 @@ class TableView extends View
       @model = data
       @update()
 
-new TableView
+TableView.register()
 
 class ContentView extends View
   tag: 'live-content'
@@ -53,7 +53,7 @@ class ContentView extends View
   """
   js: ()->
 
-new ContentView
+ContentView.register()
 
 class StreamingTable extends View
   tag: 'example-streaming-table'
@@ -105,4 +105,4 @@ class StreamingTable extends View
       @model = data
       @update()
 
-new StreamingTable
+StreamingTable.register()
