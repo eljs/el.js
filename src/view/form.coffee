@@ -244,13 +244,17 @@ class FormView extends View
         log "Validation error has occured", err.stack
         @obs.trigger InputViewEvents.Error, name, err.message
 
+  # custom submit handler, do not bind to form
+  _submit: (event)->
+
+  # submit to use for binding form
   submit: (event)->
+    event.preventDefault()
+
     # do a real submit
     if @fullyValidated
-      return true
-
-    # otherwise do validation
-    event.preventDefault()
+      @_submit(event)
+      return
 
     names = []
     promises = []
@@ -258,7 +262,7 @@ class FormView extends View
       names.push name
       promises.push input.validator(@model, name)
 
-    Q.allSettled(promises).done (results)=>
+    return Q.allSettled(promises).done (results)=>
       rejected = false
       for result, i in results
         if result.state == 'rejected'
@@ -271,9 +275,7 @@ class FormView extends View
 
       @fullyValidated = true
       @obs.trigger FormViewEvents.Submit, @model
-      @submit()
-
-    return false
+      @_submit event
 
   _get: (model, path)->
     names = path.split '.'
