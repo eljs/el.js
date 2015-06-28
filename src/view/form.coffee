@@ -305,7 +305,6 @@ class FormView extends View
     names = path.split '.'
 
     if names.length == 1
-      model[path] = value
       return [model, path]
 
     lastName = names.pop()
@@ -323,7 +322,6 @@ class FormView extends View
 
       currentObject = currentObject[name]
 
-    currentObject[lastName] = value
     return [currentObject, lastName]
 
   js: ()->
