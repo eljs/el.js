@@ -1,10 +1,8 @@
 _ = require 'underscore'
 
-Q = require 'q'
-
-config = require '../config'
-
 utils = require('../utils')
+promise = utils.shim.promise
+xhr = utils.shim.xhr
 
 log = utils.log
 requestAnimationFrame = utils.shim.requestAnimationFrame
@@ -21,20 +19,32 @@ class ScheduledTask
   cancel: ()->
     @kill = true
 
+# map of apis by name
+apis = {}
+
 class Api
   scheduledTasks: null
 
   # url is api base path such as https://api.crowdstart.com
+  url: ''
+
   # token is the api token to set as bearer for auth
-  constructor: (@url, @token)->
+  token: ''
+
+  constructor: (@url = '', @token = '')->
     @scheduledTasks = []
 
     url = @url
     if url[url.length-1] == '/'
       @url = url.substring 0, url.length - 1
 
-    # make this the default api if none is provided
-    config.api = @ if !config.api?
+  # retrieve a cached api object by name
+  @get: (name = '')->
+    return apis[name]
+
+  # cache the api object by name so you can retrieve it later
+  register: (name = '')->
+    apis[name] = @
 
   # get/post/put/patch/delete send a GET/POST/PUT/PATCH/DELETE request
   #  path is appending to the url to determine the endpoint
@@ -42,18 +52,20 @@ class Api
   #
   #  return a promise
   get:    (path)->
-    if path[0] != '/'
+    p = path
+    if p[0] != '/'
       p = '/' + path
-    return Q.xhr
+    return xhr
       method: 'GET'
       headers:
         Authorization: @token
       url: @url + p
 
   post:   (path, data)->
-    if path[0] != '/'
+    p = path
+    if p[0] != '/'
       p = '/' + path
-    return Q.xhr
+    return xhr
       method: 'POST'
       headers:
         Authorization: @token
@@ -61,9 +73,10 @@ class Api
       data: data
 
   put:    (path, data)->
-    if path[0] != '/'
+    p = path
+    if p[0] != '/'
       p = '/' + path
-    return Q.xhr
+    return xhr
       method: 'PUT'
       headers:
         Authorization: @token
@@ -71,9 +84,10 @@ class Api
       data: data
 
   patch:  (path, data)->
-    if path[0] != '/'
+    p = path
+    if p[0] != '/'
       p = '/' + path
-    return Q.xhr
+    return xhr
       method: 'PATCH'
       headers:
         Authorization: @token
@@ -81,9 +95,10 @@ class Api
       data: data
 
   delete: (path)->
-    if path[0] != '/'
+    p = path
+    if p[0] != '/'
       p = '/' + path
-    return Q.xhr
+    return xhr
       method: 'DELETE'
       headers:
         Authorization: @token

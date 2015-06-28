@@ -1,9 +1,9 @@
+_ = require 'underscore'
+
 utils = require '../utils'
 log = utils.log
 riot = utils.shim.riot
-_ = require 'underscore'
-
-Q = require 'q'
+promise = utils.shim.promise
 
 View = require './view'
 
@@ -97,24 +97,26 @@ helpers =
             do (validatorFn)->
               validators.push (pair)->
                 [model, name] = pair
-                p = Q(pair).then((pair) -> return validatorFn(pair[0], pair[1])).then (v)->
+                p = promise.new (resolve, reject) ->
+                  resolve(pair)
+
+                p.then((pair) -> return validatorFn(pair[0], pair[1])).then (v)->
                   model[name] = v
-                  d = Q.defer()
-                  d.resolve pair
-                  return d.promise
+                  return promise.new (resolve, reject)->
+                    resolve pair
 
         validators.push (pair)->
           [model, name] = pair
           # on success resolve the value in the model
-          d = Q.defer()
-          d.resolve model[name]
-          return d.promise
+          return promise.new (resolve, reject)->
+            resolve model[name]
 
         validator = (model, name)->
-          result = Q([model, name])
+          p = promise.new (resolve, reject)->
+            resolve([model, name])
           for validatorFn in validators
-            result = result.then(validatorFn)
-          return result
+            p = p.then(validatorFn)
+          return p
 
         found = false
         for lookup in @tagLookup
@@ -262,7 +264,7 @@ class FormView extends View
       names.push name
       promises.push input.validator(@model, name)
 
-    return Q.allSettled(promises).done (results)=>
+    return promise.all(promises).done (results)=>
       rejected = false
       for result, i in results
         if result.state == 'rejected'

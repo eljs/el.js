@@ -1,17 +1,25 @@
-utils = require('../src/utils')
-log = utils.log
-log.DEBUG = true
+try
+  console.log 'shim'
 
-mockXhr = require 'xhr2'
+  shim = require('../src/utils/shim')
+  shim.riot = require 'riot'
 
-utils.shim.riot = require 'riot'
+  console.log 'log'
+  utils = require('../src/utils')
+  log = utils.log
+  log.DEBUG = true
 
-Q = require 'q'
-require('q-xhr')(mockXhr, Q)
+  console.log 'globals'
+  global.XMLHttpRequest = require 'xhr2'
 
-testserver = require './testserver'
-testserver.listen 12345, ()->
-  log.info 'STARTING TEST SERVER'
+  console.log 'server'
+  testserver = require './testserver'
+  testserver.listen 12345, ()->
+    log.info 'STARTING TEST SERVER'
 
-# start tests here
-require './data'
+  console.log 'tests'
+  # start tests here
+  require './data'
+
+catch e
+  console.log 'what', e.stack

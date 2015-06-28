@@ -27,8 +27,10 @@ helpers.registerValidator ((inputCfg) -> return inputCfg.hints.indexOf('email') 
 helpers.registerValidator ((inputCfg) -> return inputCfg.hints.indexOf('email') >= 0), (model, name)->
   value = model[name]
   if value.length > 0
-    return api.get('email/' + value).then (data)->
-      throw new Error "Email already exists"
+    return api.get('email/' + value).then (res)->
+      if res.status == 200
+        throw new Error "Email already exists"
+      return value
     , ()->
       return value
   throw new Error "Email cannot be empty"

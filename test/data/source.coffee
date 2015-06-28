@@ -1,108 +1,106 @@
-#covers api, policy, and source
+# #covers api, policy, and source
+# chai = require 'chai'
+# chaiAsPromised = require 'chai-as-promised'
 
-chai = require 'chai'
-chaiAsPromised = require 'chai-as-promised'
+# chai.use chaiAsPromised
+# should = chai.should()
 
-chai.use chaiAsPromised
-should = chai.should()
+# _ = require 'underscore'
 
-_ = require 'underscore'
-Q = require 'q'
+# Api = require '../../src/data/api'
+# Source = require '../../src/data/source'
+# utils = require '../../src/utils'
+# promise = utils.shim.promise
 
-Api = require '../../src/data/api'
-Source = require '../../src/data/source'
-utils = require '../../src/utils'
-log = utils.log
+# log = utils.log
 
-describe 'Source Loading', ->
-  it 'should try loading from data without API', ->
-    a = new Api
-    source = new Source(name: 'test', data: 'data')
+# describe 'Source Loading', ->
+#   it 'should try loading from data without API', ->
+#     source = new Source(name: 'test', data: 'data')
 
-    d = Q.defer()
+#     p = promise.new (resolve, reject) ->
+#       source.once Source.Events.LoadData, (data)->
+#         resolve data
 
-    source.once Source.Events.LoadData, (data)->
-      d.resolve data
+#       source.once Source.Events.LoadError, (z)->
+#         resolve 'fail'
 
-    source.once Source.Events.LoadError, ()->
-      d.resolve 'fail'
+#       setTimeout ()->
+#         reject()
+#       , 100
 
-    setTimeout ()->
-      d.reject()
-    , 100
+#     p.should.eventually.equal 'data'
 
-    d.promise.should.eventually.equal 'data'
+#   it 'should try loading with API', ->
+#     a = new Api 'http://localhost:12345'
+#     source = new Source(name: 'test', api: a, path: 'data.json')
 
-  it 'should try loading with API', ->
-    d = Q.defer()
+#     log.warn('try api')
+#     p = promise.new (resolve, reject) ->
+#       source.once Source.Events.LoadData, ()->
+#         resolve 'win'
 
-    a = new Api 'http://localhost:12345'
-    source = new Source(name: 'test', api: a, path: 'data.json')
+#       source.once Source.Events.LoadError, ()->
+#         resolve 'fail'
 
-    source.once Source.Events.LoadData, ()->
-      d.resolve 'win'
+#       setTimeout ()->
+#         reject()
+#       , 100
 
-    source.once Source.Events.LoadError, ()->
-      d.resolve 'fail'
+#     p.should.eventually.equal 'win'
 
-    setTimeout ()->
-      d.reject()
-    , 100
+#   it 'should try loading and fail with API and no endpoint', ->
+#     a = new Api
+#     source = new Source(name: 'test', api: a, path: 'test')
 
-    d.promise.should.eventually.equal 'win'
+#     log.warn('try fail')
+#     p = promise.new (resolve, reject) ->
+#       source.once Source.Events.LoadData, ()->
+#         resolve 'win'
 
-  it 'should try loading and fail with API and no endpoint', ->
-    a = new Api
-    source = new Source(name: 'test', api: a, path: 'test')
+#       source.once Source.Events.LoadError, ()->
+#         resolve 'fail'
 
-    d = Q.defer()
+#       setTimeout ()->
+#         reject()
+#       , 100
 
-    source.once Source.Events.LoadData, ()->
-      d.resolve 'win'
+#     p.should.eventually.equal 'fail'
 
-    source.once Source.Events.LoadError, ()->
-      d.resolve 'fail'
+# describe 'Source Eventing', ->
+#   it 'should bind and unbind events', ->
+#     a = new Api
+#     source = new Source(name: 'test', api: a)
 
-    setTimeout ()->
-      d.reject()
-    , 100
+#     val = 0
+#     source.on 'echo', (v)-> val = v
+#     source.trigger 'echo', 1
+#     val.should.equal 1
 
-    d.promise.should.eventually.equal 'fail'
+#     source.off 'echo'
+#     source.trigger 'echo', 2
+#     val.should.equal 1
 
-describe 'Source Eventing', ->
-  it 'should bind and unbind events', ->
-    a = new Api
-    source = new Source(name: 'test', api: a)
+#   it 'should bind and events and execute once', ->
+#     a = new Api
+#     source = new Source(name: 'test', api: a)
 
-    val = 0
-    source.on 'echo', (v)-> val = v
-    source.trigger 'echo', 1
-    val.should.equal 1
+#     val = 0
+#     source.once 'echo', (v)-> val = v
+#     source.trigger 'echo', 1
+#     val.should.equal 1
 
-    source.off 'echo'
-    source.trigger 'echo', 2
-    val.should.equal 1
+#     source.trigger 'echo', 2
+#     val.should.equal 1
 
-  it 'should bind and events and execute once', ->
-    a = new Api
-    source = new Source(name: 'test', api: a)
+#   it 'should prefix events with source name', ->
+#     a = new Api
+#     source = new Source(name: 'test', api: a)
 
-    val = 0
-    source.once 'echo', (v)-> val = v
-    source.trigger 'echo', 1
-    val.should.equal 1
+#     mediator = utils.mediator
 
-    source.trigger 'echo', 2
-    val.should.equal 1
+#     val = 0
+#     mediator.one 'test.echo', (v)-> val = v
 
-  it 'should prefix events with source name', ->
-    a = new Api
-    source = new Source(name: 'test', api: a)
-
-    mediator = utils.mediator
-
-    val = 0
-    mediator.one 'test.echo', (v)-> val = v
-
-    source.trigger 'echo', 1
-    val.should.equal 1
+#     source.trigger 'echo', 1
+#     val.should.equal 1

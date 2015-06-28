@@ -52,7 +52,7 @@
   global.require = require;
   // source: /Users/dtai/work/verus/crowdcontrol/examples/table/table.coffee
   require.define('./table', function (module, exports, __dirname, __filename) {
-    var ContentView, Source, StreamingTable, TableView, View, api, policy, streamingPolicy, extend = function (child, parent) {
+    var ContentView, TableView, View, api, extend = function (child, parent) {
         for (var key in parent) {
           if (hasProp.call(parent, key))
             child[key] = parent[key]
@@ -66,10 +66,7 @@
         return child
       }, hasProp = {}.hasOwnProperty;
     View = crowdcontrol.view.View;
-    Source = crowdcontrol.data.Source;
     api = new crowdcontrol.data.Api('http://localhost:12345');
-    policy = new crowdcontrol.data.Policy({ intervalTime: 5000 });
-    streamingPolicy = new crowdcontrol.data.TabularRestfulStreamingPolicy({ intervalTime: 20000 });
     TableView = function (superClass) {
       extend(TableView, superClass);
       function TableView() {
@@ -78,27 +75,18 @@
       TableView.prototype.tag = 'example-live-table';
       TableView.prototype.html = '<div class="{ block: true, loading: loading }">\n  <table>\n    <thead>\n      <tr>\n        <th>Seconds Since Server Started</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr each="{ model }" class="animated bounceIn">\n        <td><live-content model="{ value }"></td>\n      </tr>\n    </tbody>\n  </table>\n  <div class="loader">Loading...</div>\n</div>';
       TableView.prototype.js = function () {
-        var src;
         this.loading = false;
-        src = new Source({
-          name: 'table',
-          api: api,
-          path: 'seconds',
-          policy: policy
-        });
-        src.on(Source.Events.Loading, function (_this) {
+        return api.scheduleEvery(function (_this) {
           return function () {
             _this.loading = true;
+            api.get('seconds').then(function (data) {
+              _this.loading = false;
+              _this.model = JSON.parse(data.responseText);
+              return _this.update()
+            });
             return _this.update()
           }
-        }(this));
-        return src.on(Source.Events.LoadData, function (_this) {
-          return function (data) {
-            _this.loading = false;
-            _this.model = data;
-            return _this.update()
-          }
-        }(this))
+        }(this), 5000, true)
       };
       return TableView
     }(View);
@@ -114,53 +102,7 @@
       };
       return ContentView
     }(View);
-    ContentView.register();
-    StreamingTable = function (superClass) {
-      extend(StreamingTable, superClass);
-      function StreamingTable() {
-        return StreamingTable.__super__.constructor.apply(this, arguments)
-      }
-      StreamingTable.prototype.tag = 'example-streaming-table';
-      StreamingTable.prototype.html = '<div class="{ block: true, loading: loading }">\n  <table>\n    <thead>\n      <tr>\n        <th>Polygons in Random Order</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr each="{ model }" if="{ value != null }" class="{ animated: true, flipInX: !this.parent.animateOut, flipOutX: this.parent.animateOut }">\n        <td><live-content model="{ value }"></td>\n      </tr>\n      <tr></tr>\n    </tbody>\n  </table>\n  <div class="loader">Loading...</div>\n</div>';
-      StreamingTable.prototype.js = function () {
-        var src;
-        this.loading = false;
-        this.animateOut = false;
-        src = new Source({
-          name: 'table2',
-          api: api,
-          path: 'polygon',
-          policy: streamingPolicy
-        });
-        src.on(Source.Events.Loading, function (_this) {
-          return function () {
-            _this.loading = true;
-            _this.animateOut = true;
-            _this.update();
-            return setTimeout(function () {
-              _this.animateOut = false;
-              _this.model = [];
-              return _this.update()
-            }, 500)
-          }
-        }(this));
-        src.on(Source.Events.LoadDataPartial, function (_this) {
-          return function (data) {
-            _this.update();
-            return _this.model = data
-          }
-        }(this));
-        return src.on(Source.Events.LoadData, function (_this) {
-          return function (data) {
-            _this.loading = false;
-            _this.model = data;
-            return _this.update()
-          }
-        }(this))
-      };
-      return StreamingTable
-    }(View);
-    StreamingTable.register()
+    ContentView.register()
   });
   require('./table')
-}.call(this, this))//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRhYmxlLmNvZmZlZSJdLCJuYW1lcyI6WyJDb250ZW50VmlldyIsIlNvdXJjZSIsIlN0cmVhbWluZ1RhYmxlIiwiVGFibGVWaWV3IiwiVmlldyIsImFwaSIsInBvbGljeSIsInN0cmVhbWluZ1BvbGljeSIsImV4dGVuZCIsImNoaWxkIiwicGFyZW50Iiwia2V5IiwiaGFzUHJvcCIsImNhbGwiLCJjdG9yIiwiY29uc3RydWN0b3IiLCJwcm90b3R5cGUiLCJfX3N1cGVyX18iLCJjcm93ZGNvbnRyb2wiLCJ2aWV3IiwiZGF0YSIsIkFwaSIsIlBvbGljeSIsImludGVydmFsVGltZSIsIlRhYnVsYXJSZXN0ZnVsU3RyZWFtaW5nUG9saWN5Iiwic3VwZXJDbGFzcyIsInRhZyIsImh0bWwiLCJqcyIsInNyYyIsImxvYWRpbmciLCJuYW1lIiwicGF0aCIsIm9uIiwiRXZlbnRzIiwiTG9hZGluZyIsIl90aGlzIiwidXBkYXRlIiwiTG9hZERhdGEiLCJtb2RlbCIsInJlZ2lzdGVyIiwiYW5pbWF0ZU91dCIsInNldFRpbWVvdXQiLCJMb2FkRGF0YVBhcnRpYWwiXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztRQUFBQSxXLEVBQUFDLE0sRUFBQUMsYyxFQUFBQyxTLEVBQUFDLEksRUFBQUMsRyxFQUFBQyxNLEVBQUFDLGUsRUFBQUMsTUFBQSxhQUFBQyxLQUFBLEVBQUFDLE1BQUE7QUFBQSxpQkFBQUMsR0FBQSxJQUFBRCxNQUFBO0FBQUEsY0FBQUUsT0FBQSxDQUFBQyxJQUFBLENBQUFILE1BQUEsRUFBQUMsR0FBQTtBQUFBLFlBQUFGLEtBQUEsQ0FBQUUsR0FBQSxJQUFBRCxNQUFBLENBQUFDLEdBQUE7QUFBQTtBQUFBLGlCQUFBRyxJQUFBO0FBQUEsZUFBQUMsV0FBQSxHQUFBTixLQUFBO0FBQUE7QUFBQSxRQUFBSyxJQUFBLENBQUFFLFNBQUEsR0FBQU4sTUFBQSxDQUFBTSxTQUFBO0FBQUEs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
+}.call(this, this))//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInRhYmxlLmNvZmZlZSJdLCJuYW1lcyI6WyJDb250ZW50VmlldyIsIlRhYmxlVmlldyIsIlZpZXciLCJhcGkiLCJleHRlbmQiLCJjaGlsZCIsInBhcmVudCIsImtleSIsImhhc1Byb3AiLCJjYWxsIiwiY3RvciIsImNvbnN0cnVjdG9yIiwicHJvdG90eXBlIiwiX19zdXBlcl9fIiwiY3Jvd2Rjb250cm9sIiwidmlldyIsImRhdGEiLCJBcGkiLCJzdXBlckNsYXNzIiwidGFnIiwiaHRtbCIsImpzIiwibG9hZGluZyIsInNjaGVkdWxlRXZlcnkiLCJfdGhpcyIsImdldCIsInRoZW4iLCJtb2RlbCIsIkpTT04iLCJwYXJzZSIsInJlc3BvbnNlVGV4dCIsInVwZGF0ZSIsInJlZ2lzdGVyIl0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7UUFBQUEsVyxFQUFBQyxTLEVBQUFDLEksRUFBQUMsRyxFQUFBQyxNQUFBLGFBQUFDLEtBQUEsRUFBQUMsTUFBQTtBQUFBLGlCQUFBQyxHQUFBLElBQUFELE1BQUE7QUFBQSxjQUFBRSxPQUFBLENBQUFDLElBQUEsQ0FBQUgsTUFBQSxFQUFBQyxHQUFBO0FBQUEsWUFBQUYsS0FBQSxDQUFBRSxHQUFBLElBQUFELE1BQUEsQ0FBQUMsR0FBQTtBQUFBO0FBQUEsaUJBQUFHLElBQUE7QUFBQSxlQUFBQyxXQUFBLEdBQUFOLEtBQUE7QUFBQTtBQUFBLFFBQUFLLElBQUEsQ0FBQUUsU0FBQSxHQUFBTixNQUFBLENBQUFNLFNBQUE7QUFBQSxRQUFBUCxLQUFBLENBQUFPLFNBQUEsT0FBQUYsSUFBQTtBQUFBLFFBQUFMLEtBQUEsQ0FBQVEsU0FBQSxHQUFBUCxNQUFBLENBQUFNLFNBQUE7QUFBQSxlQUFBUCxLQUFBO0FBQUEsTztJQUFBSCxJQUFBLEdBQU9ZLFlBQUEsQ0FBYUMsSUFBYixDQUFrQmIsSUFBekIsQztJQUVBQyxHQUFBLEdBQVUsSUFBQVcsWUFBQSxDQUFhRSxJQUFiLENBQWtCQyxHQUFsQixDQUFzQix3QkFBdEIsQ0FBVixDO0lBRU1oQixTQUFBLEcsVUFBQWlCLFU7Ozs7OzBCQUNKQyxHLEdBQUssb0I7MEJBQ0xDLEksR0FBTSw2VzswQkFpQk5DLEUsR0FBSTtBQUFBLFFBQ0YsS0FBQ0MsT0FBRCxHQUFXLEtBQVgsQ0FERTtBQUFBLFEsT0FHRm5CLEdBQUEsQ0FBSW9CLGFBQUosQ0FBa0IsVUFBQUMsS0FBQTtBQUFBLFUsT0FBQTtBQUFBLFlBQ2hCQSxLQUFBLENBQUNGLE9BQUQsR0FBVyxJQUFYLENBRGdCO0FBQUEsWUFFaEJuQixHQUFBLENBQUlzQixHQUFKLENBQVEsU0FBUixFQUFtQkMsSUFBbkIsQ0FBd0IsVUFBQ1YsSUFBRDtBQUFBLGNBQ3RCUSxLQUFBLENBQUNGLE9BQUQsR0FBVyxLQUFYLENBRHNCO0FBQUEsY0FFdEJFLEtBQUEsQ0FBQ0csS0FBRCxHQUFTQyxJQUFBLENBQUtDLEtBQUwsQ0FBV2IsSUFBQSxDQUFLYyxZQUFoQixDQUFULENBRnNCO0FBQUEsYyxPQUd0Qk4sS0FBQSxDQUFDTyxNQUFELEVBSHNCO0FBQUEsYUFBeEIsRUFGZ0I7QUFBQSxZLE9BTWhCUCxLQUFBLENBQUNPLE1BQUQsRUFOZ0I7QUFBQTtBQUFBLGVBQWxCLEVBT0UsSUFQRixFQU9RLElBUFIsQ0FIRTtBQUFBLE87O0tBbkJBLENBQWtCN0IsSUFBbEIsRTtJQStCTkQsU0FBQSxDQUFVK0IsUUFBVixHO0lBRU1oQyxXQUFBLEcsVUFBQWtCLFU7Ozs7OzRCQUNKQyxHLEdBQUssYzs0QkFDTEMsSSxHQUFNLDBDOzRCQUdOQyxFLEdBQUk7QUFBQSxPOztLQUxBLENBQW9CbkIsSUFBcEIsRTtJQU9ORixXQUFBLENBQVlnQyxRQUFaLEUiLCJzb3VyY2VSb290IjoiL2V4YW1wbGVzL3RhYmxlIn0=

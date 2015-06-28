@@ -1,138 +1,131 @@
-_ = require 'underscore'
-Q = require 'q'
+# _ = require 'underscore'
 
-config = require '../config'
+# utils = require '../utils'
+# promise = utils.promise
+# requestAnimationFrame = utils.shim.requestAnimationFrame
+# log = utils.log
 
-utils = require '../utils'
-requestAnimationFrame = utils.shim.requestAnimationFrame
-log = utils.log
+# Policy = require('./policy').Policy
 
-Policy = require('./policy').Policy
+# Events =
+#   Reload: 'source-reload'
+#   Loading: 'source-loading'
+#   LoadData: 'source-load-data'
+#   LoadError: 'source-load-error'
+#   LoadDataPartial: 'source-load-data-partial'
 
-Events =
-  Reload: 'source-reload'
-  Loading: 'source-loading'
-  LoadData: 'source-load-data'
-  LoadError: 'source-load-error'
-  LoadDataPartial: 'source-load-data-partial'
+# # A Source serves data either from the backend or from a backing set of data
+# class Source
+#   @Events: Events
 
-# A Source serves data either from the backend or from a backing set of data
-class Source
-  @Events: Events
+#   ### Static Data ###
 
-  ### Basic Info ###
+#   # data is backing data for non-api loaders if no api is specified.  It may also be used to cache data from the server
+#   data: null
 
-  # name is used to prepend events, make sure it is unique
-  name: ''
+#   ### Dynamic Data ###
 
-  ### Static Data ###
+#   # api is object of API type, specifies the api to hit. If this is not present, then fallback to data
+#   # if a string is provided, it will automatically try and use the api by name
+#   api: null
 
-  # data is backing data for non-api loaders if no api is specified.  It may also be used to cache data from the server
-  data: null
+#   # path is the api endpoint to hit such as 'user' for https://api.crowdstart.com/user
+#   path: ''
 
-  ### Dynamic Data ###
+#   # policy refers how the Source loads and saves data
+#   # policy tells the source how often to reload data and how to batch data for example
+#   # policy also preprocesses data
+#   _policy: null
 
-  # api is object of API type, specifies the api to hit. If this is not present, then fallback to data
-  api: null
+#   # policy getter and setter
+#   @property 'policy',
+#     get: ->
+#       return @_policy
+#     set: (value) ->
+#       log "Set Policy", @policy
+#       @_policy.source = null if @_policy?
+#       @stop()
+#       @_policy = value || Policy.Once
+#       @_policy.source = @ if @_policy?
+#       @start()
 
-  # path is the api endpoint to hit such as 'user' for https://api.crowdstart.com/user
-  path: ''
+#   # task is the result of calling api's task scheduling
+#   _task: null
 
-  # policy refers how the Source loads and saves data
-  # policy tells the source how often to reload data and how to batch data for example
-  # policy also preprocesses data
-  _policy: null
+#   # global event pump, mediator is needed to avoid very confusing pub/sub chains
+#   _mediator: utils.mediator
 
-  # policy getter and setter
-  @property 'policy',
-    get: ->
-      return @_policy
-    set: (value) ->
-      log "Set Policy", @policy
-      @_policy.source = null if @_policy?
-      @stop()
-      @_policy = value || Policy.Once
-      @_policy.source = @ if @_policy?
-      @start()
+#   constructor: (@options)->
+#     policy = @options.policy || Policy.Once
+#     delete @options.policy
 
-  # task is the result of calling api's task scheduling
-  _task: null
+#     _.extend @, @options
 
-  # global event pump, mediator is needed to avoid very confusing pub/sub chains
-  _mediator: utils.mediator
+#     @policy = policy
 
-  constructor: (@options)->
-    policy = @options.policy || Policy.Once
-    delete @options.policy
+#     @on Events.Reload, ()=>
+#       @_load()
 
-    _.extend @, @options
+#   start: ()->
+#     if @api?
+#       policy = @policy
+#       if policy.intervalTime == Infinity
+#         @_task = @api.scheduleOnce (()=>@_load()), 0
+#       else
+#         @_task = @api.scheduleEvery (()=>@_load()), policy.intervalTime, true
+#     else
+#       requestAnimationFrame ()=>
+#         @_load()
 
-    @api = config.api if !@api?
+#   stop: ()->
+#     @_task.cancel() if @_task?
+#     @_task = null
 
-    @policy = policy
+#   _load: ()->
+#     @policy.unload()
+#     if @api?
+#       @trigger Events.Loading
 
-    @on Events.Reload, ()=>
-      @_load()
+#       success = (data)=>
+#         @trigger Events.LoadData, data
+#         @data = data
+#       error = (err) =>
+#         log.warn("THIS IS BAD", err.stack)
+#         @trigger Events.LoadError, err
 
-  start: ()->
-    if @api?
-      policy = @policy
-      if policy.intervalTime == Infinity
-        @_task = @api.scheduleOnce (()=>@_load()), 0
-      else
-        @_task = @api.scheduleEvery (()=>@_load()), policy.intervalTime, true
-    else
-      requestAnimationFrame ()=>
-        @_load()
+#       load = (res) =>
+#         return @policy.load(res).done(success, error)
+#       fail = (res) =>
+#         log.warn("THIS LESS BAD", res)
+#         @trigger Events.LoadError, res.statusText
 
-  stop: ()->
-    @_task.cancel() if @_task?
-    @_task = null
+#       return @api.get(@path).then(load, fail)
+#     else
+#       return promise.new (resolve, reject)=>
+#         requestAnimationFrame ()=>
+#           @trigger Events.LoadData, @data
+#           resolve @data
 
-  _load: ()->
-    @policy.unload()
-    if @api?
-      @trigger Events.Loading
+#   eventName: (event)->
+#     path = @path
+#     if @api?
+#       path = @api.url + path
+#     return path + '.' + event.trim().replace(' ', ' ' + path + '.')
 
-      success = (data)=>
-        @trigger Events.LoadData, data
-        @data = data
-      error = (err) =>
-        @trigger Events.LoadError, err
-      progress = (data) =>
-        @trigger Events.LoadDataPartial, data
-        @data = data
+#   on: (event, fn)->
+#     @_mediator.on @eventName(event), fn
 
-      load = (res) =>
-        return @policy.load(res).done(success, error, progress)
-      fail = (res) =>
-        @trigger Events.LoadError, res.message
+#   once: (event, fn)->
+#     @_mediator.one @eventName(event), fn
 
-      return @api.get(@path).then(load, fail)
-    else
-      d = Q.defer()
-      requestAnimationFrame ()=>
-        @trigger Events.LoadData, @data
-        d.resolve @data
-      return d.promise
+#   off: (event, fn)->
+#     @_mediator.off @eventName(event), fn
 
-  eventName: (event)->
-    return @name + '.' + event.trim().replace(' ', ' ' + @name + '.')
+#   trigger: (event)->
+#     args = Array.prototype.slice.call arguments
+#     args.shift()
+#     args.unshift @eventName(event)
 
-  on: (event, fn)->
-    @_mediator.on @eventName(event), fn
+#     @_mediator.trigger.apply @, args
 
-  once: (event, fn)->
-    @_mediator.one @eventName(event), fn
-
-  off: (event, fn)->
-    @_mediator.off @eventName(event), fn
-
-  trigger: (event)->
-    args = Array.prototype.slice.call arguments
-    args.shift()
-    args.unshift @eventName(event)
-
-    @_mediator.trigger.apply @, args
-
-module.exports = Source
+# module.exports = Source

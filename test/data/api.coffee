@@ -5,14 +5,15 @@ chai.use chaiAsPromised
 should = chai.should()
 
 _ = require 'underscore'
-Q = require 'q'
+utils = require '../../src/utils'
+promise = utils.shim.promise
 
 Api = require '../../src/data/api'
 log = require '../../src/utils/log'
 
 describe 'Api Task Scheduling', ->
   it 'should schedule once after a 100 millis', ->
-    d = Q.defer()
+    d = promise.defer()
     fn = () ->
       d.resolve 'win'
 
@@ -25,9 +26,9 @@ describe 'Api Task Scheduling', ->
     d.promise.should.eventually.equal 'win'
 
   it 'should schedule every 100 millis and kill', ->
-    d1 = Q.defer()
-    d2 = Q.defer()
-    d3 = Q.defer()
+    d1 = promise.defer()
+    d2 = promise.defer()
+    d3 = promise.defer()
     n = 0
     fn = () ->
       n++
@@ -54,8 +55,8 @@ describe 'Api Task Scheduling', ->
     d3.promise.should.eventually.equal 'win'
 
   it 'should schedule every 100 millis and immediately execute', ->
-    d1 = Q.defer()
-    d2 = Q.defer()
+    d1 = promise.defer()
+    d2 = promise.defer()
     n = 0
     fn = (dt) ->
       n++
