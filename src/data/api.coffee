@@ -57,6 +57,7 @@ class Api
       p = '/' + path
     return xhr
       method: 'GET'
+      contentType: "application/json",
       headers:
         Authorization: @token
       url: @url + p
@@ -67,6 +68,7 @@ class Api
       p = '/' + path
     return xhr
       method: 'POST'
+      contentType: "application/json",
       headers:
         Authorization: @token
       url: @url + p
@@ -78,6 +80,7 @@ class Api
       p = '/' + path
     return xhr
       method: 'PUT'
+      contentType: "application/json",
       headers:
         Authorization: @token
       url: @url + p
@@ -89,6 +92,7 @@ class Api
       p = '/' + path
     return xhr
       method: 'PATCH'
+      contentType: "application/json",
       headers:
         Authorization: @token
       url: @url + p
@@ -100,6 +104,7 @@ class Api
       p = '/' + path
     return xhr
       method: 'DELETE'
+      contentType: "application/json",
       headers:
         Authorization: @token
       url: @url + p
