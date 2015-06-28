@@ -240,9 +240,9 @@ class FormView extends View
       [model, lastName] = @_set @model, name, newValue
       input = @inputs[name]
 
-      input.validator(model, lastName).done (value)=>
-        @obs.trigger InputViewEvents.Set, name, value
-      , (err)=>
+      input.validator(model, lastName).then((value)=>
+        @obs.trigger InputViewEvents.Set, name, value)
+      .catch (err)=>
         log "Validation error has occured", err.stack
         @obs.trigger InputViewEvents.Error, name, err.message
 
@@ -265,12 +265,12 @@ class FormView extends View
       [model,lastName] = @_find @model, name
       promises.push input.validator(model, lastName)
 
-    return promise.all(promises).done (results)=>
+    return promise.settle(promises).done((results)=>
       rejected = false
       for result, i in results
-        if result && result.isRejected()
+        if result.isRejected()
           rejected = true
-          @obs.trigger InputViewEvents.Error, names[i], result.reason.message
+          @obs.trigger InputViewEvents.Error, names[i], result.reason().message
 
       if rejected
         @obs.trigger FormViewEvents.SubmitFailed, @model
@@ -278,7 +278,7 @@ class FormView extends View
 
       @fullyValidated = true
       @obs.trigger FormViewEvents.Submit, @model
-      @_submit event
+      @_submit event)
 
   _get: (model, path)->
     names = path.split '.'
