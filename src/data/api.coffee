@@ -51,7 +51,7 @@ class Api
   #    ex. path = 'user' creates a request to 'https://api.crowdstart.com/user'
   #
   #  return a promise
-  get:    (path)->
+  get:    (path, data)->
     p = path
     if p[0] != '/'
       p = '/' + path
@@ -61,6 +61,7 @@ class Api
       headers:
         Authorization: @token
       url: @url + p
+      data: JSON.stringify(data)
 
   post:   (path, data)->
     p = path
@@ -72,7 +73,7 @@ class Api
       headers:
         Authorization: @token
       url: @url + p
-      data: data
+      data: JSON.stringify(data)
 
   put:    (path, data)->
     p = path
@@ -84,7 +85,7 @@ class Api
       headers:
         Authorization: @token
       url: @url + p
-      data: data
+      data: JSON.stringify(data)
 
   patch:  (path, data)->
     p = path
@@ -96,9 +97,9 @@ class Api
       headers:
         Authorization: @token
       url: @url + p
-      data: data
+      data: JSON.stringify(data)
 
-  delete: (path)->
+  delete: (path, data)->
     p = path
     if p[0] != '/'
       p = '/' + path
@@ -108,6 +109,7 @@ class Api
       headers:
         Authorization: @token
       url: @url + p
+      data: JSON.stringify(data)
 
   # scheduleOnce starts (if not started) the event loop and adds a function to
   #  the queue to be executed in some milliseconds
