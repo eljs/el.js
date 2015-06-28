@@ -262,12 +262,13 @@ class FormView extends View
     promises = []
     for name, input of @inputs
       names.push name
-      promises.push input.validator(@model, name)
+      [model,lastName] = @_find @model, name
+      promises.push input.validator(model, lastName)
 
     return promise.all(promises).done (results)=>
       rejected = false
       for result, i in results
-        if result.state == 'rejected'
+        if result && result.isRejected()
           rejected = true
           @obs.trigger InputViewEvents.Error, names[i], result.reason.message
 
@@ -295,6 +296,11 @@ class FormView extends View
     return currentObject[lastName]
 
   _set: (model, path, value)->
+    [currentObject, lastName] = @_find(model, path)
+    currentObject[lastName] =  value
+    return [currentObject, lastName]
+
+  _find: (model, path)->
     # expand names that are paths
     names = path.split '.'
 
