@@ -13,8 +13,8 @@ api = new crowdcontrol.data.Api 'http://localhost:12345', ''
 helpers.defaultTagName = 'basic-input'
 
 # validation
-helpers.registerTag ((inputCfg)-> return inputCfg.hints.indexOf('email') >= 0), 'email-input'
-helpers.registerValidator ((inputCfg) -> return inputCfg.hints.indexOf('email') >= 0), (model, name)->
+helpers.registerTag ((inputCfg)-> return inputCfg.hints['email']), 'email-input'
+helpers.registerValidator ((inputCfg) -> return inputCfg.hints['email']), (model, name)->
   value = model[name]
   throw new Error "Enter a valid email" if !value?
 
@@ -24,7 +24,7 @@ helpers.registerValidator ((inputCfg) -> return inputCfg.hints.indexOf('email') 
     return value
   throw new Error "Enter a valid email"
 
-helpers.registerValidator ((inputCfg) -> return inputCfg.hints.indexOf('email') >= 0), (model, name)->
+helpers.registerValidator ((inputCfg) -> return inputCfg.hints['email']), (model, name)->
   value = model[name]
   if value.length > 0
     return api.get('email/' + value).then (res)->
