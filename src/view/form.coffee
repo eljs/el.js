@@ -104,7 +104,7 @@ helpers =
 
       validators = []
 
-      do (validators)=>
+      do (validators, inputCfg)=>
         for lookup in @validatorLookup
           if lookup.predicate inputCfg
             validatorFn = lookup.validatorFn
