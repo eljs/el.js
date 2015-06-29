@@ -33,9 +33,9 @@ class InputConfig
   # hints is a dict parsed from a space separate list of text descriptors that the predicate should check
   hints: null
 
-  constructor: (@name, @default='', @placeholder='', @hints = '')->
+  constructor: (@name, @default='', @placeholder='', hints = '')->
     # tokenize the hints
-    @hints = tokenize @hints
+    @hints = tokenize hints
 
 # An Input contains the data for creating an input
 class Input

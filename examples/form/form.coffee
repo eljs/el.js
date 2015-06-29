@@ -51,7 +51,7 @@ EmailInputView.register()
 
 class ExampleFormView extends FormView
   inputConfigs:[
-    new InputConfig 'email', '', 'Anything but your@email.com', 'email'
+    new InputConfig 'email', '', 'Anything but your@email.com', 'email test:test'
     new InputConfig 'basic', '', 'No Validation On This One'
     new InputConfig 'example.nested.structure.1', '', 'Example Nested Object'
   ]
