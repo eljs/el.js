@@ -16,3 +16,5 @@ module.exports =
     x = new xhr()
     return x.send.apply x, arguments
   promise: promise
+
+#requires bind polyfill

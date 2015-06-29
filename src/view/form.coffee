@@ -7,6 +7,18 @@ promise = utils.shim.promise
 
 View = require './view'
 
+tokenize = (str)->
+  tokens = str.split(' ')
+  dict = {}
+  for token in tokens
+    if token.indexOf(':') >= 0
+      [k, v] = token.split(':')
+      dict[k] = v
+    else
+      dict[token] = true
+
+  return dict
+
 # An InputConfig is used to configure what Form generates
 class InputConfig
   # name of the property on the model
@@ -18,10 +30,12 @@ class InputConfig
   # placeholder of input
   placeholder: ''
 
-  # hints is a space separate list of text descriptors that the predicate should check
-  hints: ''
+  # hints is a dict parsed from a space separate list of text descriptors that the predicate should check
+  hints: null
 
   constructor: (@name, @default='', @placeholder='', @hints = '')->
+    # tokenize the hints
+    @hints = tokenize @hints
 
 # An Input contains the data for creating an input
 class Input
@@ -100,7 +114,7 @@ helpers =
                 p = promise.new (resolve, reject) ->
                   resolve(pair)
 
-                p.then((pair) -> return validatorFn(pair[0], pair[1])).then (v)->
+                p.then((pair) -> return validatorFn.call(inputCfg, pair[0], pair[1])).then (v)->
                   model[name] = v
                   return promise.new (resolve, reject)->
                     resolve pair
@@ -360,3 +374,4 @@ module.exports =
 
   Input: Input
   InputConfig: InputConfig
+  tokenize: tokenize
