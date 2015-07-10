@@ -51,63 +51,63 @@ class Api
   #    ex. path = 'user' creates a request to 'https://api.crowdstart.com/user'
   #
   #  return a promise
-  get:    (path, data)->
+  get:    (path, data, headers = {})->
+    headers.Authorization = @token if @token
     p = path
     if p[0] != '/'
       p = '/' + path
     return xhr
       method: 'GET'
       contentType: "application/json",
-      headers:
-        Authorization: @token
+      headers: headers
       url: @url + p
       data: JSON.stringify(data)
 
-  post:   (path, data)->
+  post:   (path, data, headers = {})->
+    headers.Authorization = @token if @token
     p = path
     if p[0] != '/'
       p = '/' + path
     return xhr
       method: 'POST'
       contentType: "application/json",
-      headers:
-        Authorization: @token
+      headers: headers
       url: @url + p
       data: JSON.stringify(data)
 
-  put:    (path, data)->
+  put:    (path, data, headers = {})->
+    headers.Authorization = @token if @token
     p = path
     if p[0] != '/'
       p = '/' + path
     return xhr
       method: 'PUT'
       contentType: "application/json",
-      headers:
-        Authorization: @token
+      headers: headers
       url: @url + p
       data: JSON.stringify(data)
 
-  patch:  (path, data)->
+  patch:  (path, data, headers = {})->
+    headers.Authorization = @token if @token
     p = path
     if p[0] != '/'
       p = '/' + path
     return xhr
       method: 'PATCH'
       contentType: "application/json",
-      headers:
-        Authorization: @token
+      headers: headers
       url: @url + p
       data: JSON.stringify(data)
 
-  delete: (path, data)->
+  delete: (path, data, headers = {})->
+    headers.Authorization = @token if @token
     p = path
     if p[0] != '/'
       p = '/' + path
     return xhr
       method: 'DELETE'
       contentType: "application/json",
-      headers:
-        Authorization: @token
+      headers: headers
       url: @url + p
       data: JSON.stringify(data)
 
