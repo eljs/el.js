@@ -149,6 +149,7 @@ helpers =
           name: inputCfg.name
           value: inputCfg.default
           placeholder: inputCfg.placeholder
+          cfg: inputCfg
 
         inputs[inputCfg.name] = new Input tag, model, validator
 
