@@ -255,11 +255,12 @@ class FormView extends View
       [model, lastName] = @_set @model, name, newValue
       input = @inputs[name]
 
-      input.validator(model, lastName).then((value)=>
-        @obs.trigger InputViewEvents.Set, name, value)
-      .catch (err)=>
-        log "Validation error has occured", err.stack
-        @obs.trigger InputViewEvents.Error, name, err.message
+      if input?
+        input.validator(model, lastName).then((value)=>
+          @obs.trigger InputViewEvents.Set, name, value)
+        .catch (err)=>
+          log "Validation error has occured", err.stack
+          @obs.trigger InputViewEvents.Error, name, err.message
 
   # custom submit handler, do not bind to form
   _submit: (event)->
