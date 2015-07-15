@@ -50,7 +50,7 @@
     require.modules[file] = fn
   };
   global.require = require;
-  // source: /Users/dtai/work/verus/crowdcontrol/examples/form/form.coffee
+  // source: /Users/zk/work/verus/crowdcontrol/examples/form/form.coffee
   require.define('./form', function (module, exports, __dirname, __filename) {
     var BasicInputView, EmailInputView, ExampleFormView, FormView, InputConfig, InputView, Source, View, api, helpers, extend = function (child, parent) {
         for (var key in parent) {
