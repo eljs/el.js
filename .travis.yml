@@ -1,0 +1,17 @@
+before-install:
+- export TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
+language: node_js
+node_js:
+- 0.12
+script: |
+  ./node_modules/.bin/shortcake test
+cache:
+  directories:
+  - node_modules
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+  slack:
+    secure: Q9D47UyFU0p2A9/ZMUhFD26kAl7vPn7wkW2XsnZdC1Z/65SapF8Myn1WtG28lFwYkDLc+i75atMrzFgsQBkFXV38grDNb8FSDArtkMSLVqRutNXlDzYh4F3kAdThO2rHrji68OdLj89j5FbR8iAEjE0sahI1t+GY0hQ/pKHxpOf2qVdECPYX9t4r88oDBEn6FV3IyIm9On+XqD4MSMm0ek2UbFjYx59g4DGKBwc+M2czDTvJCrDNCCahXVHIwSZ1qvifIaGIQNK6Gtm57vVLufAmCOniRFFj3Wy6AsoxBx6Ogm1k4t6FlgJyvav5NhnH7GESCAGx8awODBHGWIIvI9uOd9SbWOjhKm0LdimeJ4oRuKhbQ/2XoLG9ZOLpdnYfUaBii98fBfiuoDyavgUHLP2U1qHde0+Hqid8djR8kppw/jWkZSSmI9eLm8PfYCVS8ZDXEtS3v14VXQi2w/XFJFr9PAde1gGmrUURe4/ei3vGfF8wCk+PRylE4+f3m2QpYdKJM1tdowh+YFXx8G26XFCCGVWlNGMfPaBv3Pn905SJSxBqgSep/01Go4j43o7wJADQG+hejn8Y30NjBuwDvpooFz2HJfXG7XF4r8ghcD11iPhZTUyUN5veTJGevgRvr9sMZDkX/vaTFqqXKnKQuwcqvA01NNVjQXUat6SEZQY=
+
