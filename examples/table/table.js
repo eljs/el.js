@@ -50,7 +50,7 @@
     require.modules[file] = fn
   };
   global.require = require;
-  // source: /Users/zk/work/verus/crowdcontrol/examples/table/table.coffee
+  // source: /Users/dtai/work/verus/crowdcontrol/examples/table/table.coffee
   require.define('./table', function (module, exports, __dirname, __filename) {
     var ContentView, TableView, View, api, extend = function (child, parent) {
         for (var key in parent) {

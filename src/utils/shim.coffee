@@ -1,4 +1,4 @@
-promise = require 'bluebird/js/main/promise'
+promise = require 'bluebird'
 xhr = require 'xhr-promise'
 
 Function::property = (prop, desc) ->
