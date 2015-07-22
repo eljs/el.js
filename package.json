@@ -30,7 +30,7 @@
     "xhr2": "^0.1.2"
   },
   "dependencies": {
-    "bluebird": "^2.9.30",
+    "bluebird": "^2.9.34",
     "raf": "^3.0.0",
     "underscore": "^1.8.3",
     "xhr-promise": "^1.2.0"
