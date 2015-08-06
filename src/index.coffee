@@ -7,5 +7,6 @@ module.exports =
   config : require './config'
   start  : (opts)->
     @utils.shim.riot.mount('*')
+  Events : require './events'
 
 window.crowdcontrol = module.exports if window?
