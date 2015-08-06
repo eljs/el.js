@@ -156,7 +156,7 @@ helpers =
 
     return inputs
 
-Events.InputViewEvents =
+Events.Input =
   Result: 'input-result'
   Get: 'input-get'
   Set: 'input-set'
@@ -181,18 +181,18 @@ class InputView extends View
     @html += @errorHtml
 
   events:
-    "#{Events.InputViewEvents.Set}": (name, value) ->
+    "#{Events.Input.Set}": (name, value) ->
       if name == @model.name
         @clearError()
         @model.value = value
         @update()
 
-    "#{Events.InputViewEvents.Error}": (name, message)->
+    "#{Events.Input.Error}": (name, message)->
       if name == @model.name
         @setError message
         @update()
 
-    "#{Events.InputViewEvents.ClearError}": (name)->
+    "#{Events.Input.ClearError}": (name)->
       if name == @model.name
         @clearError()
         @update()
@@ -200,7 +200,7 @@ class InputView extends View
   change: (event) ->
     value = @getValue(event.target)
     if value != @model.value
-      @obs.trigger Events.InputViewEvents.Change, @model.name, value
+      @obs.trigger Events.Input.Change, @model.name, value
     @model.value = value
 
   hasError: ()->
@@ -230,14 +230,12 @@ riot.tag "control", "", (opts)->
     opts.obs = input.obs
     riot.mount @root, input.tag, opts
 
-Events.FormViewEvents =
-  Submit: 'form-submit'
+Events.Form =
+  SubmitSuccess: 'form-submit-success'
   SubmitFailed: 'form-submit-failed'
 
 #FormView is the base view for a set of form inputs
 class FormView extends View
-  @Events: FormViewEvents
-
   # inputConfigs is an array of InputConfig objects
   inputConfigs: null
 
@@ -246,20 +244,20 @@ class FormView extends View
   # ctx.inputs: {}
 
   events:
-    "#{Events.InputViewEvents.Get}": (name)->
-      @obs.trigger Events.InputViewEvents.Result, (@_get @model, name)
+    "#{Events.Input.Get}": (name)->
+      @obs.trigger Events.Input.Result, (@_get @model, name)
 
-    "#{Events.InputViewEvents.Change}": (name, newValue)->
+    "#{Events.Input.Change}": (name, newValue)->
       @fullyValidated = false
       [model, lastName] = @_set @model, name, newValue
       input = @inputs[name]
 
       if input?
         input.validator(model, lastName).then((value)=>
-          @obs.trigger Events.InputViewEvents.Set, name, value)
+          @obs.trigger Events.Input.Set, name, value)
         .catch (err)=>
           log "Validation error has occured", err.stack
-          @obs.trigger Events.InputViewEvents.Error, name, err.message
+          @obs.trigger Events.Input.Error, name, err.message
 
   # custom submit handler, do not bind to form
   _submit: (event)->
@@ -285,14 +283,14 @@ class FormView extends View
       for result, i in results
         if result.isRejected()
           rejected = true
-          @obs.trigger Events.InputViewEvents.Error, names[i], result.reason().message
+          @obs.trigger Events.Input.Error, names[i], result.reason().message
 
       if rejected
-        @obs.trigger Events.FormViewEvents.SubmitFailed, @model
+        @obs.trigger Events.Form.SubmitFailed, @model
         return
 
       @fullyValidated = true
-      @obs.trigger Events.FormViewEvents.Submit, @model
+      @obs.trigger Events.Form.SubmitSuccess, @model
       @_submit event)
 
   _get: (model, path)->
