@@ -254,7 +254,7 @@ class FormView extends View
 
   events:
     "#{Events.Input.Get}": ()->
-      @_response.apply @, arguments
+      @_result.apply @, arguments
 
     "#{Events.Input.Change}": ()->
       @_change.apply @, arguments
@@ -271,7 +271,7 @@ class FormView extends View
         log "Validation error has occured", err.stack
         @obs.trigger Events.Input.Error, name, err.message
 
-  _respond: (name)->
+  _result: (name)->
     @obs.trigger Events.Input.Result, (@_get @model, name)
 
   # custom submit handler, do not bind to form
