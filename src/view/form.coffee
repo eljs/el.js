@@ -199,7 +199,7 @@ class InputView extends View
 
   change: (event) ->
     value = @getValue(event.target)
-    if value != @model.value
+    if value == '' || value != @model.value
       @obs.trigger Events.Input.Change, @model.name, value
     @model.value = value
 
