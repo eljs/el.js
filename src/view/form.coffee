@@ -181,21 +181,30 @@ class InputView extends View
     @html += @errorHtml
 
   events:
-    "#{Events.Input.Set}": (name, value) ->
-      if name == @model.name
-        @clearError()
-        @model.value = value
-        @update()
+    "#{Events.Input.Set}": ()->
+      @_set.apply @, arguments
 
-    "#{Events.Input.Error}": (name, message)->
-      if name == @model.name
-        @setError message
-        @update()
+    "#{Events.Input.Error}": ()->
+      @_error.apply @, arguments
 
-    "#{Events.Input.ClearError}": (name)->
-      if name == @model.name
-        @clearError()
-        @update()
+    "#{Events.Input.ClearError}": ()->
+      @_clearError.apply @, arguments
+
+  _clearError: (name)->
+    if name == @model.name
+      @clearError()
+      @update()
+
+  _error: (name, message) ->
+    if name == @model.name
+      @setError message
+      @update()
+
+  _set: (name, value) ->
+    if name == @model.name
+      @clearError()
+      @model.value = value
+      @update()
 
   change: (event) ->
     value = @getValue(event.target)
@@ -244,27 +253,33 @@ class FormView extends View
   # ctx.inputs: {}
 
   events:
-    "#{Events.Input.Get}": (name)->
-      @obs.trigger Events.Input.Result, (@_get @model, name)
+    "#{Events.Input.Get}": ()->
+      @_response.apply @, arguments
 
-    "#{Events.Input.Change}": (name, newValue)->
-      @fullyValidated = false
-      [model, lastName] = @_set @model, name, newValue
-      input = @inputs[name]
+    "#{Events.Input.Change}": ()->
+      @_change.apply @, arguments
 
-      if input?
-        input.validator(model, lastName).then((value)=>
-          @obs.trigger Events.Input.Set, name, value)
-        .catch (err)=>
-          log "Validation error has occured", err.stack
-          @obs.trigger Events.Input.Error, name, err.message
+  _change: (name, newValue)->
+    @fullyValidated = false
+    [model, lastName] = @_set @model, name, newValue
+    input = @inputs[name]
+
+    if input?
+      input.validator(model, lastName).then((value)=>
+        @obs.trigger Events.Input.Set, name, value)
+      .catch (err)=>
+        log "Validation error has occured", err.stack
+        @obs.trigger Events.Input.Error, name, err.message
+
+  _respond: (name)->
+    @obs.trigger Events.Input.Result, (@_get @model, name)
 
   # custom submit handler, do not bind to form
   _submit: (event)->
 
   # submit to use for binding form
   submit: (event)->
-    event.preventDefault()
+    event?.preventDefault()
 
     # do a real submit
     if @fullyValidated
