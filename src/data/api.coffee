@@ -1,5 +1,3 @@
-_ = require 'underscore'
-
 utils = require('../utils')
 promise = utils.shim.promise
 xhr = utils.shim.xhr
@@ -7,13 +5,16 @@ xhr = utils.shim.xhr
 log = utils.log
 requestAnimationFrame = utils.shim.requestAnimationFrame
 
+timeNow = Date.now || ()->
+  return new Date().getTime()
+
 ScheduledTaskType =
   every: 'every'
   once: 'once'
 
 class ScheduledTask
   constructor: (@type, @fn, @millis)->
-    @scheduledTime = _.now() + @millis
+    @scheduledTime = timeNow() + @millis
     @kill = false
 
   cancel: ()->
@@ -144,7 +145,7 @@ class Api
     if @scheduledTasks.length > 0
       log 'API: starting loop'
       requestAnimationFrame ()=>
-        now = _.now()
+        now = timeNow()
         i = 0
 
         length = @scheduledTasks.length

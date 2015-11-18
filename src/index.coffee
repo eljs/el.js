@@ -1,5 +1,3 @@
-_ = require 'underscore'
-
 module.exports =
   data   : require './data/index'
   utils  : require './utils/index'

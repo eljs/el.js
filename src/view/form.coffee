@@ -1,4 +1,6 @@
-_ = require 'underscore'
+isFunction = require 'is-function'
+isNumber = requrie 'is-number'
+isObject = requrie 'is-object'
 
 Events = require '../events'
 utils = require '../utils'
@@ -77,7 +79,7 @@ helpers =
   #  a validatorFn of type (string[property of Object]) -> promise or value/throw error,
   #  resolve using the sanitized value or reject a error message
   registerValidator: (predicate, validatorFn)->
-    if _.isFunction(validatorFn)
+    if isFunction(validatorFn)
       @validatorLookup.push new ValidatorCondition(predicate, validatorFn)
 
   # registerValidator takes a predicate of type (InputConfig) -> bool and tagName
@@ -343,7 +345,7 @@ class FormView extends View
         currentObject = currentObject[name]
         continue
 
-      if _.isNumber name
+      if isNumber name
         currentObject[name] = []
       else
         currentObject[name] = {}
@@ -374,7 +376,7 @@ class FormView extends View
           inputs[key].model.value = value
 
 traverse = (obj, fn, key = '')->
-  if _.isArray(obj) || _.isObject(obj)
+  if isArray(obj) || isObject(obj)
     for k, v of obj
       traverse v, fn, if key == '' then k else (key + '.') + k
   else
