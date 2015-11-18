@@ -1,4 +1,5 @@
-_ = require 'underscore'
+extend = require 'extend'
+isFunction = require 'is-function'
 
 utils = require '../utils'
 riot = utils.shim.riot
@@ -24,10 +25,10 @@ class View
 
     while parentProto != View.prototype
       parentProto = Object.getPrototypeOf parentProto
-      proto.events = _.extend {}, parentProto.events || {}, proto.events
-      _.extend temp, parentProto || {}, proto
+      proto.events = extend {}, parentProto.events || {}, proto.events
+      extend temp, parentProto || {}, proto
 
-    _.extend proto, temp
+    extend proto, temp
 
     view = @
 
@@ -63,7 +64,7 @@ class View
           #  root
           #
 
-          if _.isFunction(v)
+          if isFunction(v)
             do (v) =>
               if @[k]?
                 oldFn = @[k]

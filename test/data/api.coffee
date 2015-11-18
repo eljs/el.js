@@ -4,7 +4,6 @@ chaiAsPromised = require 'chai-as-promised'
 chai.use chaiAsPromised
 should = chai.should()
 
-_ = require 'underscore'
 utils = require '../../src/utils'
 promise = utils.shim.promise
 
