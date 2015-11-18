@@ -1,3 +1,4 @@
+isArray    = require 'is-array'
 isFunction = require 'is-function'
 isNumber   = require 'is-number'
 isObject   = require 'is-object'
