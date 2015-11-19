@@ -23,10 +23,10 @@
     "express-simulate-latency": "0.0.2",
     "mocha": "^2.2.5",
     "mock-xhr": "^0.1.0",
-    "requisite": "^1.9.12",
+    "requisite": "^1.11.3",
+    "riot": "^2.2.4",
     "source-map-support": "^0.3.1",
     "uglify-js": "^2.4.23",
-    "riot": "^2.0.15",
     "xhr2": "^0.1.2"
   },
   "dependencies": {
