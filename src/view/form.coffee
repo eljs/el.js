@@ -1,6 +1,7 @@
+isArray    = require 'is-array'
 isFunction = require 'is-function'
-isNumber = requrie 'is-number'
-isObject = requrie 'is-object'
+isNumber   = require 'is-number'
+isObject   = require 'is-object'
 
 Events = require '../events'
 utils = require '../utils'
