@@ -1,7 +1,7 @@
 exec = require('executive').interactive
 
 task 'build', 'Build module and bundled crowdcontrol.js', ->
-  exec 'node_modules/.bin/bebop --compile-only'
+  exec 'node_modules/.bin/bebop -c'
   exec 'node_modules/.bin/coffee -bcm -o lib/ src/'
 
 task 'watch', 'watch for changes and recompile', ->
