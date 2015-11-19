@@ -50,11 +50,7 @@
     require.modules[file] = fn
   };
   global.require = require;
-<<<<<<< HEAD
   // source: examples/form/form.coffee
-=======
-  // source: /Users/zk/work/crowdstart/crowdcontrol/examples/form/form.coffee
->>>>>>> 6bdaf9d50511ea3a397a45e3a408ddb1dee3140e
   require.define('./form', function (module, exports, __dirname, __filename) {
     var BasicInputView, EmailInputView, ExampleFormView, FormView, InputConfig, InputView, Source, View, api, helpers, extend = function (child, parent) {
         for (var key in parent) {
