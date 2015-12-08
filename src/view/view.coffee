@@ -1,5 +1,5 @@
 isFunction   = require 'is-function'
-objectAssign = require 'object-assign'
+extend       = require 'extend'
 riot         = require 'riot'
 
 utils = require '../utils'
@@ -28,10 +28,10 @@ class View
 
     while parentProto != View.prototype
       parentProto = Object.getPrototypeOf parentProto
-      proto.events = objectAssign {}, parentProto.events || {}, proto.events
-      objectAssign temp, parentProto || {}, proto
+      proto.events = extend {}, parentProto.events || {}, proto.events
+      extend temp, parentProto || {}, proto
 
-    objectAssign proto, temp
+    extend proto, temp
 
     view = @
 
