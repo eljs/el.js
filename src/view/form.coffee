@@ -296,7 +296,7 @@ class FormView extends View
       [model,lastName] = @_find @model, name
       promises.push input.validator(model, lastName)
 
-    return promise.settle(promises).then((results)=>
+    return Promise.settle(promises).then((results)=>
       rejected = false
       for result, i in results
         if result.isRejected()
