@@ -88,7 +88,7 @@ class View
       obs = @obs = opts.obs
       if !@obs?
         obs = @obs = {}
-        utils.shim.observable obs
+        riot.observable obs
 
       if view.events?
         for name, handler of view.events
