@@ -1,12 +1,18 @@
-module.exports =
-  config: require './config'
-  utils:  require './utils/index'
-  view:   require './view/index'
+riot = require 'riot'
 
-  start: (opts) ->
-    require('riot').mount '*'
+CrowdControl =
+  Views: require './views'
+  start: (opts)->
+    riot.mount('*', opts)
 
-  # Require must be delayed until all events are exposed.
-  Events: require './events'
+if module.exports?
+  module.exports = CrowdControl
 
-window.crowdcontrol = module.exports if window?
+if window?
+  if window.Crowdstart?
+    window.Crowdstart.Crowdcontrol = CrowdControl
+  else
+    window.Crowdstart =
+      CrowdControl: CrowdControl
+
+  window.riot = riot

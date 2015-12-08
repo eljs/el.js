@@ -2,13 +2,14 @@
   "name": "crowdcontrol",
   "version": "1.1.6",
   "description": "Riot helpers for crowdstart",
-  "main": "lib/index.js",
+  "main": "lib/",
   "scripts": {
     "prepublish": "cake build && cake build-min",
     "test": "cake test"
   },
   "keywords": [
-    "crowdstart"
+    "crowdstart",
+    "riot"
   ],
   "author": "Crowdstart, LLC",
   "license": "MIT",
@@ -31,11 +32,11 @@
   },
   "dependencies": {
     "broken": "^0.1.1",
-    "extend": "^3.0.0",
-    "is-array": "^1.0.1",
     "is-function": "^1.0.1",
-    "is-number": "^2.1.0",
-    "is-object": "^1.0.1",
-    "object-assign": "^4.0.1"
+    "object-assign": "^4.0.1",
+    "promise-settle": "^0.2.1",
+    "referential": "^0.3.3",
+    "riot": "2.2.4",
+    "setprototypeof": "^1.0.0"
   }
 }
