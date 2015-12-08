@@ -7,7 +7,7 @@ riot       = require 'riot'
 
 Events = require '../events'
 View   = require './view'
-log    = require './utils/log'
+log    = require '../utils/log'
 
 tokenize = (str) ->
   tokens = (str.split ' ')
