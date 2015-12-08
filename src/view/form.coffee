@@ -35,7 +35,7 @@ class InputConfig
   # hints is a dict parsed from a space separate list of text descriptors that the predicate should check
   hints: null
 
-  constructor: (@name, @default='', @placeholder='', hints = '')->
+  constructor: (@name, @default='', @placeholder='', hints = '') ->
     # tokenize the hints
     @hints = tokenize hints
 
@@ -113,30 +113,31 @@ helpers =
             do (validatorFn) ->
               validators.push (pair) ->
                 [model, name] = pair
-                p = new Promise (resolve, reject) ->
-                  resolve(pair)
+                new Promise (resolve, reject) ->
+                  resolve pair
+                .then (pair) ->
+                  validatorFn.call inputCfg, pair[0], pair[1]
+                .then (v) ->
+                    model[name] = v
+                    return new Promise (resolve, reject) ->
+                      resolve pair
 
-                p.then((pair) -> return validatorFn.call(inputCfg, pair[0], pair[1])).then (v)->
-                  model[name] = v
-                  return new Promise (resolve, reject) ->
-                    resolve pair
-
-        validators.push (pair)->
+        validators.push (pair) ->
           [model, name] = pair
           # on success resolve the value in the model
-          return new Promise (resolve, reject)->
+          return new Promise (resolve, reject) ->
             resolve model[name]
 
-        validator = (model, name)->
-          p = new Promise (resolve, reject)->
-            resolve([model, name])
+        validator = (model, name) ->
+          p = new Promise (resolve, reject) ->
+            resolve [model, name]
           for validatorFn in validators
             p = p.then(validatorFn)
           return p
 
         found = false
         for lookup in @tagLookup
-          if !lookup?
+          unless lookup?
             continue
 
           if lookup.predicate inputCfg
@@ -144,54 +145,53 @@ helpers =
             found = true
             break
 
-        if !found
+        unless found
           tag = @defaultTagName
 
         model =
-          name: inputCfg.name
-          value: inputCfg.default
+          name:        inputCfg.name
+          value:       inputCfg.default
           placeholder: inputCfg.placeholder
-          cfg: inputCfg
+          cfg:         inputCfg
 
         inputs[inputCfg.name] = new Input tag, model, validator
 
     return inputs
 
 Events.Input =
-  Result: 'input-result'
-  Get: 'input-get'
-  Set: 'input-set'
-  Change: 'input-change'
-  Error: 'input-error'
+  Result:     'input-result'
+  Get:        'input-get'
+  Set:        'input-set'
+  Change:     'input-change'
+  Error:      'input-error'
   ClearError: 'input-clear-error'
 
 #InputView is the base view for form inputs
 class InputView extends View
   # getValue converts the element firing the event to a single value
-  getValue: (el)->
-    return el.value
+  getValue: (el) -> el.value
 
   # errorHtml is appended to the normal html for displaying errors
-  errorHtml: """
+  errorHtml: '''
     <div class="error-container" if="{ hasError() }">
       <div class="error-message">{ error }</div>
     </div>
-  """
+  '''
 
-  init: ()->
+  init: ->
     @html += @errorHtml
 
   events:
-    "#{Events.Input.Set}": ()->
+    "#{Events.Input.Set}": ->
       @_set.apply @, arguments
 
-    "#{Events.Input.Error}": ()->
+    "#{Events.Input.Error}": ->
       @_error.apply @, arguments
 
-    "#{Events.Input.ClearError}": ()->
+    "#{Events.Input.ClearError}": ->
       @_clearError.apply @, arguments
 
-  _clearError: (name)->
+  _clearError: (name) ->
     if name == @model.name
       @clearError()
       @update()
@@ -208,22 +208,22 @@ class InputView extends View
       @update()
 
   change: (event) ->
-    value = @getValue(event.target)
+    value = @getValue event.target
     if value == '' || value != @model.value
       @obs.trigger Events.Input.Change, @model.name, value
     @model.value = value
 
-  hasError: ()->
+  hasError: ->
     error = @error
     return error? && error.length? && error.length > 0
 
-  setError: (message)->
+  setError: (message) ->
     @error = message
 
-  clearError: ()->
-    @setError(null)
+  clearError: ->
+    @setError null
 
-  js: (opts)->
+  js: (opts) ->
     @model = opts.input.model
 
 # The control tag takes an Input object as opts and mounts a custom input tag
@@ -234,7 +234,7 @@ class InputView extends View
 #
 #   Example: <control input="{ inputs.email }" obs="{ obs }">
 #
-riot.tag "control", "", (opts)->
+riot.tag 'control', '', (opts) ->
   input = opts.input
   if input?
     opts.obs = input.obs
@@ -242,7 +242,7 @@ riot.tag "control", "", (opts)->
 
 Events.Form =
   SubmitSuccess: 'form-submit-success'
-  SubmitFailed: 'form-submit-failed'
+  SubmitFailed:  'form-submit-failed'
 
 #FormView is the base view for a set of form inputs
 class FormView extends View
@@ -254,47 +254,48 @@ class FormView extends View
   # ctx.inputs: {}
 
   events:
-    "#{Events.Input.Get}": ()->
+    "#{Events.Input.Get}": ->
       @_result.apply @, arguments
 
-    "#{Events.Input.Change}": ()->
+    "#{Events.Input.Change}": ->
       @_change.apply @, arguments
 
-  _change: (name, newValue)->
+  _change: (name, newValue) ->
     @fullyValidated = false
     [model, lastName] = @_set @model, name, newValue
     input = @inputs[name]
 
     if input?
-      input.validator(model, lastName).then((value)=>
-        @obs.trigger Events.Input.Set, name, value)
-      .catch (err)=>
+      input.validator(model, lastName).then (value) =>
+        @obs.trigger Events.Input.Set, name, value
+      .catch (err) =>
         log "Validation error has occured", err.stack
         @obs.trigger Events.Input.Error, name, err.message
 
-  _result: (name)->
+  _result: (name) ->
     @obs.trigger Events.Input.Result, (@_get @model, name)
 
   # custom submit handler, do not bind to form
-  _submit: (event)->
+  _submit: (event) ->
 
   # submit to use for binding form
-  submit: (event)->
+  submit: (event) ->
     event?.preventDefault()
 
     # do a real submit
     if @fullyValidated
-      @_submit(event)
+      @_submit event
       return
 
-    names = []
+    names    = []
     promises = []
+
     for name, input of @inputs
       names.push name
       [model,lastName] = @_find @model, name
-      promises.push input.validator(model, lastName)
+      promises.push input.validator model, lastName
 
-    return Promise.settle(promises).then((results)=>
+    Promise.settle(promises).then (results) =>
       rejected = false
       for result, i in results
         if result.isRejected()
@@ -307,9 +308,9 @@ class FormView extends View
 
       @fullyValidated = true
       @obs.trigger Events.Form.SubmitSuccess, @model
-      @_submit event)
+      @_submit event
 
-  _get: (model, path)->
+  _get: (model, path) ->
     names = path.split '.'
 
     if names.length == 1
@@ -317,19 +318,19 @@ class FormView extends View
 
     currentObject = model
     for name in names
-      if !currentObject[name]?
+      unless currentObject[name]?
         return undefined
 
       currentObject = currentObject[name]
 
     return currentObject[lastName]
 
-  _set: (model, path, value)->
-    [currentObject, lastName] = @_find(model, path)
+  _set: (model, path, value) ->
+    [currentObject, lastName] = @_find model, path
     currentObject[lastName] =  value
     return [currentObject, lastName]
 
-  _find: (model, path)->
+  _find: (model, path) ->
     # expand names that are paths
     names = path.split '.'
 
@@ -353,10 +354,10 @@ class FormView extends View
 
     return [currentObject, lastName]
 
-  js: ()->
+  js: ->
     @initFormGroup()
 
-  initFormGroup: ()->
+  initFormGroup: ->
     if @inputConfigs?
       if !@inputs?
         @inputs = inputs = helpers.render @inputConfigs
@@ -370,11 +371,11 @@ class FormView extends View
       @fullyValidated = false
 
       # asssumes model is object
-      traverse @model, (key, value)->
+      traverse @model, (key, value) ->
         if inputs[key]?
           inputs[key].model.value = value
 
-traverse = (obj, fn, key = '')->
+traverse = (obj, fn, key = '') ->
   if isArray(obj) || isObject(obj)
     for k, v of obj
       traverse v, fn, if key == '' then k else (key + '.') + k
@@ -382,11 +383,11 @@ traverse = (obj, fn, key = '')->
     fn key, obj
 
 module.exports =
-  helpers: helpers
-
-  FormView: FormView
-  InputView: InputView
-
-  Input: Input
-  InputConfig: InputConfig
+  helpers:  helpers
   tokenize: tokenize
+
+  FormView:    FormView
+  InputView:   InputView
+
+  Input:       Input
+  InputConfig: InputConfig
