@@ -7,9 +7,7 @@ riot       = require 'riot'
 
 Events = require '../events'
 View   = require './view'
-utils  = require '../utils'
-
-{log} = utils.log
+log    = require './utils/log'
 
 tokenize = (str) ->
   tokens = (str.split ' ')
@@ -50,18 +48,18 @@ class Input
   model: {}
 
   # validator for validating the input value, takes a model, name on the model, and returns a promise
-  validator: ()->
+  validator: ->
 
   # obs object for event capture, set by form view
   obs: null
 
-  constructor: (@tag, @model, @validator)->
+  constructor: (@tag, @model, @validator) ->
 
 class ValidatorCondition
-  constructor: (@predicate, @validatorFn)->
+  constructor: (@predicate, @validatorFn) ->
 
 class InputCondition
-  constructor: (@predicate, @tagName)->
+  constructor: (@predicate, @tagName) ->
 
 helpers =
   # tagLookup contains a list of predicate tagName pairs
@@ -79,28 +77,28 @@ helpers =
   # registerValidator takes a predicate of type (InputConfig) -> bool and
   #  a validatorFn of type (string[property of Object]) -> promise or value/throw error,
   #  resolve using the sanitized value or reject a error message
-  registerValidator: (predicate, validatorFn)->
-    if isFunction(validatorFn)
-      @validatorLookup.push new ValidatorCondition(predicate, validatorFn)
+  registerValidator: (predicate, validatorFn) ->
+    if isFunction validatorFn
+      @validatorLookup.push new ValidatorCondition predicate, validatorFn
 
   # registerValidator takes a predicate of type (InputConfig) -> bool and tagName
-  registerTag: (predicate, tagName)->
-    @tagLookup.push new InputCondition(predicate, tagName)
+  registerTag: (predicate, tagName) ->
+    @tagLookup.push new InputCondition predicate, tagName
 
   # delete an existing lookup
-  deleteTag: (tagName)->
+  deleteTag: (tagName) ->
     for lookup, i in @tagLookup
       if lookup.tagName == tagName
         @tagLookup[i] = null
 
   # delete an existing validator
-  deleteValidator: (predicate, validatorFn)->
+  deleteValidator: (predicate, validatorFn) ->
     for lookup, i in @validatorLookup
       if lookup.validatorFn == validatorFn
         @validatorLookup[i] = null
 
   # render a list of InputCfg objects, returns a map of Inputs indexed by input name
-  render: (inputCfgs)->
+  render: (inputCfgs) ->
     inputs = {}
     for inputCfg, i in inputCfgs
       if !inputCfg?
@@ -108,19 +106,19 @@ helpers =
 
       validators = []
 
-      do (validators, inputCfg)=>
+      do (validators, inputCfg) =>
         for lookup in @validatorLookup
           if lookup.predicate inputCfg
             validatorFn = lookup.validatorFn
-            do (validatorFn)->
-              validators.push (pair)->
+            do (validatorFn) ->
+              validators.push (pair) ->
                 [model, name] = pair
                 p = new Promise (resolve, reject) ->
                   resolve(pair)
 
                 p.then((pair) -> return validatorFn.call(inputCfg, pair[0], pair[1])).then (v)->
                   model[name] = v
-                  return new Promise (resolve, reject)->
+                  return new Promise (resolve, reject) ->
                     resolve pair
 
         validators.push (pair)->
