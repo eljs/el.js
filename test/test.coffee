@@ -19,7 +19,5 @@ try
 
   console.log 'tests'
 
-  require './data'
-
 catch e
   console.log 'what', e.stack
