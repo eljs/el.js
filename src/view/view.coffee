@@ -1,8 +1,8 @@
 isFunction   = require 'is-function'
 objectAssign = require 'object-assign'
+riot         = require 'riot'
 
 utils = require '../utils'
-riot  = utils.shim.riot
 
 # A View is a Riot Tag
 class View

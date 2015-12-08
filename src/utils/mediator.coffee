@@ -1,6 +1,3 @@
-riot = require('./shim').riot
+riot = require 'riot'
 
-mediator = {}
-riot.observable mediator
-
-module.exports = mediator
+module.exports = riot.observable {}

@@ -1,18 +1,18 @@
+Promise    = require 'broken'
 isArray    = require 'is-array'
 isFunction = require 'is-function'
 isNumber   = require 'is-number'
 isObject   = require 'is-object'
+riot       = require 'riot'
 
-Events  = require '../events'
-Promise = require 'broken'
-log     = utils.log
-riot    = utils.shim.riot
-utils   = require '../utils'
+Events = require '../events'
+View   = require './view'
+utils  = require '../utils'
 
-View = require './view'
+{log} = utils.log
 
-tokenize = (str)->
-  tokens = str.split(' ')
+tokenize = (str) ->
+  tokens = (str.split ' ')
   dict = {}
   for token in tokens
     if token.indexOf(':') >= 0

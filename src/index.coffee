@@ -1,9 +1,10 @@
 module.exports =
-  config:require './config'
-  utils: require './utils/index'
-  view:  require './view/index'
-  start: (opts) ->
-    @utils.shim.riot.mount('*')
   Events: require './events'
+  config: require './config'
+  utils:  require './utils/index'
+  view:   require './view/index'
+
+  start: (opts) ->
+    require('riot').mount '*'
 
 window.crowdcontrol = module.exports if window?
