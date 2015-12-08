@@ -38,5 +38,5 @@ module.exports =
       if /^src/.test src
         return "#{requisite} #{files.js.in} -o #{files.js.out}"
 
-      if /src\/checkout.coffee/.test src
+      if /src\/index.coffee/.test src
         return "#{requisite} #{files.js.in} -o #{files.js.out}"

@@ -3,11 +3,11 @@ isFunction = require 'is-function'
 isNumber   = require 'is-number'
 isObject   = require 'is-object'
 
-Events = require '../events'
-utils = require '../utils'
-log = utils.log
-riot = utils.shim.riot
-promise = utils.shim.promise
+Events  = require '../events'
+Promise = require 'broken'
+log     = utils.log
+riot    = utils.shim.riot
+utils   = require '../utils'
 
 View = require './view'
 
@@ -115,22 +115,22 @@ helpers =
             do (validatorFn)->
               validators.push (pair)->
                 [model, name] = pair
-                p = promise.new (resolve, reject) ->
+                p = new Promise (resolve, reject) ->
                   resolve(pair)
 
                 p.then((pair) -> return validatorFn.call(inputCfg, pair[0], pair[1])).then (v)->
                   model[name] = v
-                  return promise.new (resolve, reject)->
+                  return new Promise (resolve, reject)->
                     resolve pair
 
         validators.push (pair)->
           [model, name] = pair
           # on success resolve the value in the model
-          return promise.new (resolve, reject)->
+          return new Promise (resolve, reject)->
             resolve model[name]
 
         validator = (model, name)->
-          p = promise.new (resolve, reject)->
+          p = new Promise (resolve, reject)->
             resolve([model, name])
           for validatorFn in validators
             p = p.then(validatorFn)

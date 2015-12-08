@@ -1,40 +1,43 @@
-extend = require 'extend'
-isFunction = require 'is-function'
+isFunction   = require 'is-function'
+objectAssign = require 'object-assign'
 
 utils = require '../utils'
-riot = utils.shim.riot
+riot  = utils.shim.riot
 
 # A View is a Riot Tag
 class View
-  @register: ()->
+  @register: ->
     new @
 
-  tag: ''
-  html: ''
-  css: ''
-  attrs: ''
+  tag:    ''
+  html:   ''
+  css:    ''
+  attrs:  ''
   events: null
   mixins: null
-  model: null
-  js: ()->
+  model:  null
 
-  constructor: ()->
+  init: ->
+
+  js: ->
+
+  constructor: ->
     proto = Object.getPrototypeOf @
     parentProto = proto
     temp = {}
 
     while parentProto != View.prototype
       parentProto = Object.getPrototypeOf parentProto
-      proto.events = extend {}, parentProto.events || {}, proto.events
-      extend temp, parentProto || {}, proto
+      proto.events = objectAssign {}, parentProto.events || {}, proto.events
+      objectAssign temp, parentProto || {}, proto
 
-    extend proto, temp
+    objectAssign proto, temp
 
     view = @
 
     @init()
 
-    riot.tag @tag, @html, @css, @attrs, (opts)->
+    riot.tag @tag, @html, @css, @attrs, (opts) ->
       # This gets around weird issues with InputView multiplexing
       # and its interactions with updateOpts in riot
       optsP = Object.getPrototypeOf(opts)
@@ -93,7 +96,5 @@ class View
             obs.on name, ()=> handler.apply @, arguments
 
       @js(opts) if @js
-
-  init: ()->
 
 module.exports = View
