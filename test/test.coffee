@@ -18,7 +18,7 @@ try
     log.info 'STARTING TEST SERVER'
 
   console.log 'tests'
-  # start tests here
+
   require './data'
 
 catch e

@@ -1,4 +1,4 @@
-exec = require('executive').interactive
+require 'shortcake'
 
 task 'build', 'Build module and bundled crowdcontrol.js', ->
   exec 'node_modules/.bin/bebop -c'
