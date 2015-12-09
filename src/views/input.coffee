@@ -31,7 +31,7 @@ class Input extends View
     @validate()
 
   error: (err)->
-    @errorMessage = err
+    @errorMessage = err?.message ? err
 
   clearError: ()->
     @errorMessage = ''
