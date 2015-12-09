@@ -44,7 +44,7 @@ class Form extends View
           return
       @_submit.apply @, arguments
 
-  @_submit: ()->
+  _submit: ()->
     # do actual submit stuff
 
 module.exports = Form
