@@ -2,7 +2,7 @@ Promise = require 'broken'
 isFunction = require 'is-function'
 
 refer = require 'referential'
-isRef = (o) -> isFunction(o) and isFunction o.ref
+isRef = (o) -> o? and isFunction o.ref
 
 # inputify takes a model and a configuration and returns observable values
 #   data: an generic dictionary object that you want to generate observable properties from
@@ -28,7 +28,7 @@ inputify = (data, configs)->
               [ref, name] = pair
               return Promise.resolve pair
                 .then (pair)->
-                  return middlewareFn.call(pair[0], pair[0](pair[1]), pair[1], pair[0])
+                  return middlewareFn.call(pair[0], pair[0].get(pair[1]), pair[1], pair[0])
                 .then (v)->
                   ref.set(name, v)
                   return pair
