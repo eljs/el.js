@@ -33,6 +33,8 @@ class Input extends View
   error: (err)->
     @errorMessage = err?.message ? err
 
+  changed: ()->
+
   clearError: ()->
     @errorMessage = ''
 
@@ -40,6 +42,7 @@ class Input extends View
   validate: (pRef)->
     p = @input.validate @input.ref, @input.name
       .then (value)=>
+        @changed(value)
         @update()
       .catch (err)=>
         @error(err)
