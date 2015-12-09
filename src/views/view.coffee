@@ -58,7 +58,7 @@ class View
           @[k] = v
 
       if @events?
-        for name, handler of view.events
+        for name, handler of @events
           do (name, handler) =>
             if typeof handler == 'string'
               @on name, ()=> @[handler].apply @, arguments
