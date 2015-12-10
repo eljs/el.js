@@ -22,7 +22,7 @@ class Input extends View
     {ref, name} = @input
 
     value = @getValue event
-    if value == ref name
+    if value == ref.get name
       return
 
     @input.ref.set name, value
