@@ -36,7 +36,7 @@
     "object-assign": "^4.0.1",
     "promise-settle": "^0.2.1",
     "referential": "^0.3.3",
-    "riot": "2.2.4",
+    "riot": "2.3.12",
     "setprototypeof": "^1.0.0"
   }
 }
