@@ -14,19 +14,18 @@
   "author": "Crowdstart, LLC",
   "license": "MIT",
   "devDependencies": {
-    "bebop": "^1.7.5",
+    "bebop": "1.8.0",
     "cake": "^0.1.1",
-    "chai": "^2.3.0",
-    "chai-as-promised": "^5.0.0",
+    "chai": "3.4.1",
+    "chai-as-promised": "5.2.0",
     "coffee-script": "^1.10.0",
     "express": "^4.12.4",
     "express-simulate-latency": "0.0.2",
     "mocha": "^2.2.5",
     "mock-xhr": "^0.1.0",
-    "requisite": "^1.11.5",
+    "requisite": "1.16.1",
     "riot": "2.2.4",
     "shortcake": "^1.1.7",
-    "source-map-support": "^0.3.1",
     "uglify-js": "^2.4.23",
     "xhr2": "^0.1.2"
   },
@@ -35,7 +34,7 @@
     "is-function": "^1.0.1",
     "object-assign": "^4.0.1",
     "promise-settle": "^0.2.1",
-    "referential": "^0.3.3",
+    "referential": "0.4.1",
     "riot": "2.3.12",
     "setprototypeof": "^1.0.0"
   }
