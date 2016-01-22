@@ -1,6 +1,6 @@
 View = require './view'
 inputify = require './inputify'
-{observable}  = require 'riot'
+{observable} = require('../riot')()
 
 Promise = require 'broken'
 settle = require 'promise-settle'

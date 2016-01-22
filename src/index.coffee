@@ -1,9 +1,16 @@
-riot = require 'riot'
+r = require('./riot')
+riot = r()
 
 CrowdControl =
   Views: require './views'
+
+  tags: []
   start: (opts)->
-    riot.mount('*', opts)
+    @tags = riot.mount('*', opts)
+  update: ()->
+    for tag in @tags
+      tag.update()
+  riot: r
 
 if module.exports?
   module.exports = CrowdControl
@@ -14,5 +21,3 @@ if window?
   else
     window.Crowdstart =
       CrowdControl: CrowdControl
-
-  window.riot = riot

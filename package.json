@@ -24,7 +24,7 @@
     "mocha": "^2.2.5",
     "mock-xhr": "^0.1.0",
     "requisite": "1.16.1",
-    "riot": "2.2.4",
+    "riot": "2.3.12",
     "shortcake": "^1.1.7",
     "uglify-js": "^2.4.23",
     "xhr2": "^0.1.2"
@@ -35,7 +35,6 @@
     "object-assign": "^4.0.1",
     "promise-settle": "^0.2.1",
     "referential": "0.4.1",
-    "riot": "2.3.12",
     "setprototypeof": "^1.0.0"
   }
 }
