@@ -1,6 +1,10 @@
 refer = require 'referential'
+window.riot = require 'riot'
 
 CrowdControl = require '../../src/'
+
+window.Crowdcontrol = CrowdControl
+
 View    = CrowdControl.Views.View
 Form    = CrowdControl.Views.Form
 Input   = CrowdControl.Views.Input
@@ -18,7 +22,7 @@ isEmail = (value)->
 doesEmailExist = (value)->
   throw new Error "Email cannot be empty" if value.length == 0
 
-  return new Promise (resolve, reject)=>
+  return new Promise (resolve, reject)->
     $.get('/email/' + value).then (res)->
       reject(Error "Email already exists")
     , ()->

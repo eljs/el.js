@@ -1,4 +1,4 @@
-riot = require 'riot'
+riot = require('../riot')()
 objectAssign = require 'object-assign'
 setPrototypeOf = require 'setprototypeof'
 isFunction = require 'is-function'
