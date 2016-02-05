@@ -1,14 +1,14 @@
 riot = require('../riot')()
 objectAssign = require 'object-assign'
 setPrototypeOf = (()->
-  return if Object.setPrototypeOf || {__proto__:[]} instanceof Array then setProtoOf else mixinProperties
-
   setProtoOf = (obj, proto)->
     obj.__proto__ = proto
 
   mixinProperties = (obj, proto)->
     for prop in proto
       obj[prop] = proto[prop] if !obj[prop]?
+
+  return if Object.setPrototypeOf || {__proto__:[]} instanceof Array then setProtoOf else mixinProperties
 )()
 
 isFunction = require 'is-function'
