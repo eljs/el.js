@@ -34,7 +34,6 @@
     "is-function": "^1.0.1",
     "object-assign": "^4.0.1",
     "promise-settle": "^0.2.1",
-    "referential": "0.4.1",
-    "setprototypeof": "^1.0.0"
+    "referential": "0.4.1"
   }
 }
