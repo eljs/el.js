@@ -5,7 +5,7 @@ setPrototypeOf = (()->
     obj.__proto__ = proto
 
   mixinProperties = (obj, proto)->
-    for prop in proto
+    for prop of proto
       obj[prop] = proto[prop] if !obj[prop]?
 
   return if Object.setPrototypeOf || {__proto__:[]} instanceof Array then setProtoOf else mixinProperties
