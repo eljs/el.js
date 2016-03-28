@@ -55,7 +55,7 @@ class View
       # Loop up the parents setting parent as the prototype so you have access to vars on it
       # Might be terrible, might be great, who knows?
       self = @
-      parent = self.parent
+      parent = self.parent ? opts.parent
       proto = Object.getPrototypeOf self
       while parent? && parent != proto
         setPrototypeOf self, parent
