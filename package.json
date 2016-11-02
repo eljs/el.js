@@ -14,7 +14,7 @@
   "author": "Crowdstart, LLC",
   "license": "MIT",
   "devDependencies": {
-    "bebop": "1.8.0",
+    "bebop": "1.9.4",
     "cake": "^0.1.1",
     "chai": "3.4.1",
     "chai-as-promised": "5.2.0",
