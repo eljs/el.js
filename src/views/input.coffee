@@ -2,6 +2,7 @@ View = require './view'
 
 class Input extends View
   input: null
+  valid: false
   errorMessage: ''
   errorHtml: '''
   <div class="error-container" if="{ errorMessage }">
@@ -43,9 +44,11 @@ class Input extends View
     p = @input.validate @input.ref, @input.name
       .then (value)=>
         @changed(value)
+        @valid = true
         @update()
       .catch (err)=>
         @error(err)
+        @valid = false
         @update()
         throw err
 
