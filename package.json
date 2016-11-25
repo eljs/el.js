@@ -21,7 +21,7 @@
     "coffee-script": "^1.10.0",
     "express": "^4.12.4",
     "express-simulate-latency": "0.0.2",
-    "mocha": "^2.2.5",
+    "mocha": "^3.2.0",
     "mock-xhr": "^0.1.0",
     "requisite": "1.16.1",
     "riot": "2.3.12",
