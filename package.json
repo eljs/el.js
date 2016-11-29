@@ -26,7 +26,7 @@
     "requisite": "1.16.1",
     "riot": "2.3.12",
     "shortcake": "^1.1.7",
-    "uglify-js": "^2.4.23",
+    "uglify-js": "^2.7.5",
     "xhr2": "^0.1.2"
   },
   "dependencies": {
