@@ -31,7 +31,7 @@ class Form extends View
   init: ()->
     @initInputs()
 
-  submit: ()->
+  submit: (e)->
     ps = []
     for name, input of @inputs
       pRef = {}
@@ -43,6 +43,11 @@ class Form extends View
         if !result.isFulfilled()
           return
       @_submit.apply @, arguments
+
+    if e?
+      e.preventDefault()
+      e.stopPropagation()
+
     return false
 
   _submit: ()->
