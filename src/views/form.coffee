@@ -43,6 +43,7 @@ class Form extends View
         if !result.isFulfilled()
           return
       @_submit.apply @, arguments
+    return false
 
   _submit: ()->
     # do actual submit stuff
