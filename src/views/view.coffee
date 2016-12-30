@@ -57,7 +57,7 @@ class View
       self = @
       parent = self.parent ? opts.parent
       proto = Object.getPrototypeOf self
-      while parent? && parent != proto
+      while parent && parent != proto
         setPrototypeOf self, parent
         self = parent
         parent = self.parent
