@@ -1,6 +1,7 @@
 r = ()->
-  return @riot
-r.set =  (@riot)->
+  return r.riot
+r.set =  (riot)->
+  r.riot = riot
 
 r.riot = window?.riot
 
