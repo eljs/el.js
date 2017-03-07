@@ -1,6 +1,6 @@
-import isFunction   from 'is-function'
-import objectAssign from 'es-object-assign'
 import riot         from 'riot'
+import objectAssign from 'es-object-assign'
+import {isFunction} from 'es-is'
 
 setPrototypeOf = (()->
   setProtoOf = (obj, proto)->
