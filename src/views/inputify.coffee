@@ -1,7 +1,7 @@
-Promise = require 'broken'
-isFunction = require 'is-function'
+import Promise    from 'broken'
+import isFunction from 'is-function'
+import refer      from 'referential'
 
-refer = require 'referential'
 isRef = (o) -> o? and isFunction o.ref
 
 # inputify takes a model and a configuration and returns observable values
@@ -11,7 +11,7 @@ isRef = (o) -> o? and isFunction o.ref
 #           middleware
 #       ]
 #       where middleware is an array of (value, name, model)-> value
-inputify = (data, configs)->
+inputify = (data, configs) ->
   ref = data
   if !isRef ref
     ref = refer data
@@ -55,5 +55,4 @@ inputify = (data, configs)->
 
   return inputs
 
-module.exports = inputify
-
+export default inputify

@@ -1,8 +1,8 @@
-View = require './view'
-inputify = require './inputify'
-{observable} = require('../riot')()
+import View       from  './view'
+import inputify   from  './inputify'
+import observable from 'riot-observable'
 
-Promise = require 'broken'
+import Promise from 'broken'
 
 # Supported Events:
 #   submit - fired when form is submitted
@@ -17,7 +17,7 @@ class Form extends View
   # ref to use for validate
   data: null
 
-  initInputs: ()->
+  initInputs: ->
     @inputs = {}
 
     if @configs?
@@ -27,10 +27,10 @@ class Form extends View
       for name, input of @inputs
         observable input
 
-  init: ()->
+  init: ->
     @initInputs()
 
-  submit: (e)->
+  submit: (e) ->
     ps = []
     for name, input of @inputs
       pRef = {}
@@ -49,7 +49,7 @@ class Form extends View
 
     return false
 
-  _submit: ()->
+  _submit: ->
     # do actual submit stuff
 
-module.exports = Form
+export default Form

@@ -1,23 +1,13 @@
-r = require('./riot')
-riot = r()
+import riot from 'riot'
 
-CrowdControl =
+export default CrowdControl =
   Views: require './views'
 
   tags: []
-  start: (opts)->
+
+  start: (opts) ->
     @tags = riot.mount('*', opts)
-  update: ()->
+
+  update: ->
     for tag in @tags
       tag.update()
-  riot: r
-
-if module.exports?
-  module.exports = CrowdControl
-
-if window?
-  if window.Crowdstart?
-    window.Crowdstart.Crowdcontrol = CrowdControl
-  else
-    window.Crowdstart =
-      CrowdControl: CrowdControl

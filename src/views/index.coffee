@@ -1,4 +1,3 @@
-module.exports =
-  Form:     require './form'
-  Input:    require './input'
-  View:     require './view'
+export * from './form'
+export * from './input'
+export * from './view'
