@@ -3,7 +3,6 @@ inputify = require './inputify'
 {observable} = require('../riot')()
 
 Promise = require 'broken'
-settle = require 'promise-settle'
 
 # Supported Events:
 #   submit - fired when form is submitted
@@ -38,7 +37,7 @@ class Form extends View
       input.trigger 'validate', pRef
       ps.push pRef.p
 
-    settle(ps).then (results) =>
+    Promise.settle(ps).then (results) =>
       for result in results
         if !result.isFulfilled()
           return
