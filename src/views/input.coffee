@@ -1,4 +1,4 @@
-View = require './view'
+import View from './view'
 
 class Input extends View
   input: null
@@ -10,16 +10,16 @@ class Input extends View
   </div>
   '''
 
-  beforeInit: ()->
+  beforeInit: ->
     @html += @errorHtml
 
-  init: ()->
+  init: ->
     @input.on 'validate', (pRef)=> @validate(pRef)
 
-  getValue: (event)->
+  getValue: (event) ->
     return event.target.value
 
-  change: (event)->
+  change: (event) ->
     {ref, name} = @input
 
     value = @getValue event
@@ -31,16 +31,16 @@ class Input extends View
     @clearError()
     @validate()
 
-  error: (err)->
+  error: (err) ->
     @errorMessage = err?.message ? err
 
-  changed: ()->
+  changed: ->
 
-  clearError: ()->
+  clearError: ->
     @errorMessage = ''
 
   # support pass by reference since observable.trigger doesn't return things
-  validate: (pRef)->
+  validate: (pRef) ->
     p = @input.validate @input.ref, @input.name
       .then (value)=>
         @changed(value)
@@ -57,4 +57,4 @@ class Input extends View
 
     return p
 
-module.exports = Input
+export default Input

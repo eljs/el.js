@@ -1,5 +1,7 @@
-riot = require('../riot')()
-objectAssign = require 'object-assign'
+import isFunction   from 'is-function'
+import objectAssign from 'es-object-assign'
+import riot         from 'riot'
+
 setPrototypeOf = (()->
   setProtoOf = (obj, proto)->
     obj.__proto__ = proto
@@ -10,8 +12,6 @@ setPrototypeOf = (()->
 
   return if Object.setPrototypeOf || {__proto__:[]} instanceof Array then setProtoOf else mixinProperties
 )()
-
-isFunction = require 'is-function'
 
 collapsePrototype = (collapse, proto)->
   if proto == View.prototype
@@ -31,7 +31,7 @@ class View
   attrs:  ''
   events: null
 
-  constructor: ()->
+  constructor: ->
     newProto = collapsePrototype {}, @
 
     @beforeInit()
@@ -77,7 +77,7 @@ class View
 
       @init opts
 
-  beforeInit: ()->
-  init: ()->
+  beforeInit: ->
+  init: ->
 
-module.exports = View
+export default View
