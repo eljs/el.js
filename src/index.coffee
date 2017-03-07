@@ -1,7 +1,9 @@
-import riot from 'riot'
+import riot  from 'riot'
+
+import Views from './views'
 
 export default CrowdControl =
-  Views: require './views'
+  Views: Views
 
   tags: []
 
