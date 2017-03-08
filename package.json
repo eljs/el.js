@@ -25,19 +25,19 @@
     "coffee-script": "^1.10.0",
     "express": "^4.12.4",
     "express-simulate-latency": "0.0.2",
-    "handroll": "0.2.10",
+    "handroll": "0.2.11",
     "mocha": "3.2.0",
     "mock-xhr": "^0.1.0",
     "riot": "2.3.12",
     "shortcake": "1.2.5",
-    "uglify-js": "^2.4.23",
+    "uglify-js": "2.8.7",
     "xhr2": "^0.1.2"
   },
   "dependencies": {
     "broken": "^0.1.1",
     "es-is": "3.2.1",
     "es-object-assign": "4.1.3",
-    "referential": "0.5.6",
+    "referential": "0.5.8",
     "riot": "3.3.2",
     "riot-observable": "3.0.0"
   }
