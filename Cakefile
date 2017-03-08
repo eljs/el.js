@@ -11,13 +11,14 @@ task 'build', 'build project', (cb) ->
 
   bundle = yield handroll.bundle
     entry:     'src/index.coffee'
-    external:  true
     sourceMap: false
+  yield bundle.write format: 'web'
 
-  yield bundle.write
-    format: 'es'
-  yield bundle.write
-    format: 'cjs'
+  bundle = yield handroll.bundle
+    entry:    'src/index.coffee'
+    external: true
+  yield bundle.write format: 'es'
+  yield bundle.write format: 'cjs'
 
 task 'build:min', 'build project', ['build'], ->
   exec 'uglifyjs crowdcontrol.js --compress --mangle --lint=false > crowdcontrol.min.js'
