@@ -3336,94 +3336,6 @@ Promise$2.settle = settle;
 
 Promise$2.soon = soon$1;
 
-var getOwnPropertySymbols$1;
-var hasOwnProperty$1;
-var objectAssign$2;
-var propIsEnumerable$1;
-var shouldUseNative$1;
-var toObject$1;
-var slice$1 = [].slice;
-
-getOwnPropertySymbols$1 = Object.getOwnPropertySymbols;
-
-hasOwnProperty$1 = Object.prototype.hasOwnProperty;
-
-propIsEnumerable$1 = Object.prototype.propertyIsEnumerable;
-
-toObject$1 = function(val) {
-  if (val === null || val === void 0) {
-    throw new TypeError('Object.assign cannot be called with null or undefined');
-  }
-  return Object(val);
-};
-
-shouldUseNative$1 = function() {
-  var err, i, j, k, len, letter, order2, ref, test1, test2, test3;
-  try {
-    if (!Object.assign) {
-      return false;
-    }
-    test1 = new String('abc');
-    test1[5] = 'de';
-    if (Object.getOwnPropertyNames(test1)[0] === '5') {
-      return false;
-    }
-    test2 = {};
-    for (i = j = 0; j <= 9; i = ++j) {
-      test2['_' + String.fromCharCode(i)] = i;
-    }
-    order2 = Object.getOwnPropertyNames(test2).map(function(n) {
-      return test2[n];
-    });
-    if (order2.join('') !== '0123456789') {
-      return false;
-    }
-    test3 = {};
-    ref = 'abcdefghijklmnopqrst'.split('');
-    for (k = 0, len = ref.length; k < len; k++) {
-      letter = ref[k];
-      test3[letter] = letter;
-    }
-    if (Object.keys(Object.assign({}, test3)).join('') !== 'abcdefghijklmnopqrst') {
-      return false;
-    }
-    return true;
-  } catch (error) {
-    err = error;
-    return false;
-  }
-};
-
-var index$2 = objectAssign$2 = (function() {
-  if (shouldUseNative$1()) {
-    return Object.assign;
-  }
-  return function() {
-    var from, j, k, key, len, len1, ref, source, sources, symbol, target, to;
-    target = arguments[0], sources = 2 <= arguments.length ? slice$1.call(arguments, 1) : [];
-    to = toObject$1(target);
-    for (j = 0, len = sources.length; j < len; j++) {
-      source = sources[j];
-      from = Object(source);
-      for (key in from) {
-        if (hasOwnProperty$1.call(from, key)) {
-          to[key] = from[key];
-        }
-      }
-      if (getOwnPropertySymbols$1) {
-        ref = getOwnPropertySymbols$1(from);
-        for (k = 0, len1 = ref.length; k < len1; k++) {
-          symbol = ref[k];
-          if (propIsEnumerable$1.call(from, symbol)) {
-            to[symbol] = from[symbol];
-          }
-        }
-      }
-    }
-    return to;
-  };
-})();
-
 var Ref;
 var nextId;
 
@@ -3446,6 +3358,7 @@ var Ref$1 = Ref = (function() {
     if (this.parent != null) {
       this.parent._children[this._id] = this;
     }
+    observable$1(this);
     this;
   }
 
@@ -3506,34 +3419,53 @@ var Ref$1 = Ref = (function() {
   };
 
   Ref.prototype.set = function(key, value) {
+    var k, oldValue, v;
+    if (isObject$1(key)) {
+      for (k in key) {
+        v = key[k];
+        this.set(k, v);
+      }
+      return this;
+    }
+    oldValue = this.get(key);
     this._mutate(key);
     if (value == null) {
-      this.value(index$2(this.value(), key));
+      this.value(index$1(this.value(), key));
     } else {
       this.index(key, value);
     }
+    this._triggerSet(key, value, oldValue);
     return this;
+  };
+
+  Ref.prototype._triggerSet = function(key, value, oldValue) {
+    var parentKey;
+    this.trigger('set', key, value, oldValue);
+    if (this.parent) {
+      parentKey = this.key + '.' + key;
+      return this.parent._triggerSet(parentKey, value, oldValue);
+    }
   };
 
   Ref.prototype.extend = function(key, value) {
     var clone;
     this._mutate(key);
     if (value == null) {
-      this.value(index$2(this.value(), key));
+      this.value(index$1(this.value(), key));
     } else {
       if (isObject$1(value)) {
-        this.value(index$2((this.ref(key)).get(), value));
+        this.value(index$1((this.ref(key)).get(), value));
       } else {
         clone = this.clone();
         this.set(key, value);
-        this.value(index$2(clone.get(), this.value()));
+        this.value(index$1(clone.get(), this.value()));
       }
     }
     return this;
   };
 
   Ref.prototype.clone = function(key) {
-    return new Ref(index$2({}, this.get(key)));
+    return new Ref(index$1({}, this.get(key)));
   };
 
   Ref.prototype.index = function(key, value, obj, prev) {
