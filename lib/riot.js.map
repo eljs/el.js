@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "riot.js",
+  "sourceRoot": "..",
+  "sources": [
+    "src/riot.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA,IAAA;;AAAA,CAAA,GAAI,SAAA;AACF,SAAO,CAAC,CAAC;AADP;;AAEJ,CAAC,CAAC,GAAF,GAAS,SAAC,IAAD;SACP,CAAC,CAAC,IAAF,GAAS;AADF;;AAGT,CAAC,CAAC,IAAF,sDAAS,MAAM,CAAE;;AAEjB,MAAM,CAAC,OAAP,GAAiB"
+}

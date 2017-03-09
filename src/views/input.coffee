@@ -16,6 +16,11 @@ class Input extends View
   init: ->
     @input.on 'validate', (pRef)=> @validate(pRef)
 
+    # auto refresh on update of field
+    @ref.on 'set', (n, v1, v2)=>
+      if n == @input.name && v1 != v2
+        @update()
+
   getValue: (event) ->
     return event.target.value
 
