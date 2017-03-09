@@ -14,10 +14,10 @@ class Input extends View
     @html += @errorHtml
 
   init: ->
-    @input.on 'validate', (pRef)=> @validate(pRef)
+    @input.on 'validate', (pRef) => @validate pRef
 
     # auto refresh on update of field
-    @input.ref.on 'set', (n, v1, v2)=>
+    @input.ref.on 'set', (n, v1, v2) =>
       if n == @input.name && v1 != v2
         @update()
 
