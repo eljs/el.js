@@ -18,7 +18,8 @@ task 'build', 'build project', (cb) ->
     entry:    'src/index.coffee'
     external: true
   yield bundle.write format: 'es'
-  yield bundle.write format: 'cjs'
+
+  # yield bundle.write format: 'cjs'
 
 task 'example', 'Launch Examples', ->
   exec 'coffee examples/server.coffee'
