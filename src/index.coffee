@@ -1,15 +1,21 @@
 import riot  from 'riot'
-
 import Views from './views'
+import {isFunction} from 'es-is'
 
-export default CrowdControl =
+CrowdControl =
+  # deprecated
   Views: Views
 
-  tags: []
+  View: Views.Form
 
-  start: (opts) ->
-    @tags = riot.mount('*', opts)
+  riot: riot
 
-  update: ->
-    for tag in @tags
-      tag.update()
+  start: ()->
+    riot.mount('*', opts)
+
+for k, v of riot
+  if isFunction v
+    CrowdControl[k] = ()->
+      v.apply riot, arguments
+
+export default CrowdControl

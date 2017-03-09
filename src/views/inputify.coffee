@@ -7,9 +7,7 @@ isRef = (o) -> o? and isFunction o.ref
 # inputify takes a model and a configuration and returns observable values
 #   data: an generic dictionary object that you want to generate observable properties from
 #   configs: a mapping of model values to a middleware stack eg.
-#       field1: [
-#           middleware
-#       ]
+#       field1: middleware
 #       where middleware is an array of (value, name, model)-> value
 inputify = (data, configs) ->
   ref = data
