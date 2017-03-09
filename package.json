@@ -30,7 +30,6 @@
     "mock-xhr": "^0.1.0",
     "riot": "2.3.12",
     "shortcake": "1.2.5",
-    "uglify-js": "2.8.7",
     "xhr2": "^0.1.2"
   },
   "dependencies": {
@@ -39,7 +38,6 @@
     "es-object-assign": "4.1.3",
     "referential": "0.5.9",
     "riot": "3.3.2",
-    "riot-observable": "3.0.0",
-    "uglify-js": "2.8.10"
+    "riot-observable": "3.0.0"
   }
 }
