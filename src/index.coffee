@@ -14,8 +14,9 @@ CrowdControl =
     riot.mount('*', opts)
 
 for k, v of riot
-  if isFunction v
-    CrowdControl[k] = ()->
-      v.apply riot, arguments
+  do (k,v)->
+    if isFunction v
+      CrowdControl[k] = ()->
+        v.apply riot, arguments
 
 export default CrowdControl
