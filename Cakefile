@@ -9,10 +9,10 @@ task 'clean', 'clean project', ->
 task 'build', 'build project', (cb) ->
   handroll = require 'handroll'
 
-  bundle = yield handroll.bundle
-    entry:     'src/index.coffee'
-    sourceMap: false
-  yield bundle.write format: 'web'
+  # bundle = yield handroll.bundle
+  #   entry:     'src/index.coffee'
+  #   sourceMap: false
+  # yield bundle.write format: 'web'
 
   bundle = yield handroll.bundle
     entry:    'src/index.coffee'
