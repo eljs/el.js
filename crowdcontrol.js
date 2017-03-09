@@ -2707,7 +2707,7 @@ shouldUseNative = function() {
   }
 };
 
-var index$1 = objectAssign = (function() {
+var index = objectAssign = (function() {
   if (shouldUseNative()) {
     return Object.assign;
   }
@@ -2878,7 +2878,7 @@ collapsePrototype = function(collapse, proto) {
   }
   parentProto = Object.getPrototypeOf(proto);
   collapsePrototype(collapse, parentProto);
-  return index$1(collapse, parentProto);
+  return index(collapse, parentProto);
 };
 
 View = (function() {
@@ -3430,7 +3430,7 @@ var Ref$1 = Ref = (function() {
     oldValue = this.get(key);
     this._mutate(key);
     if (value == null) {
-      this.value(index$1(this.value(), key));
+      this.value(index(this.value(), key));
     } else {
       this.index(key, value);
     }
@@ -3451,21 +3451,21 @@ var Ref$1 = Ref = (function() {
     var clone;
     this._mutate(key);
     if (value == null) {
-      this.value(index$1(this.value(), key));
+      this.value(index(this.value(), key));
     } else {
       if (isObject$1(value)) {
-        this.value(index$1((this.ref(key)).get(), value));
+        this.value(index((this.ref(key)).get(), value));
       } else {
         clone = this.clone();
         this.set(key, value);
-        this.value(index$1(clone.get(), this.value()));
+        this.value(index(clone.get(), this.value()));
       }
     }
     return this;
   };
 
   Ref.prototype.clone = function(key) {
-    return new Ref(index$1({}, this.get(key)));
+    return new Ref(index({}, this.get(key)));
   };
 
   Ref.prototype.index = function(key, value, obj, prev) {
@@ -3711,9 +3711,16 @@ Input = (function(superClass) {
   };
 
   Input.prototype.init = function() {
-    return this.input.on('validate', (function(_this) {
+    this.input.on('validate', (function(_this) {
       return function(pRef) {
         return _this.validate(pRef);
+      };
+    })(this));
+    return this.ref.on('set', (function(_this) {
+      return function(n, v1, v2) {
+        if (n === _this.input.name && v1 !== v2) {
+          return _this.update();
+        }
       };
     })(this));
   };
@@ -3783,25 +3790,29 @@ var Views$1 = Views = {
 };
 
 var CrowdControl;
+var k;
+var v;
 
-var index = CrowdControl = {
+CrowdControl = {
   Views: Views$1,
-  tags: [],
-  start: function(opts) {
-    return this.tags = riot$1.mount('*', opts);
-  },
-  update: function() {
-    var i, len, ref, results, tag$$1;
-    ref = this.tags;
-    results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
-      tag$$1 = ref[i];
-      results.push(tag$$1.update());
-    }
-    return results;
+  View: Views$1.Form,
+  riot: riot$1,
+  start: function() {
+    return riot$1.mount('*', opts);
   }
 };
 
-return index;
+for (k in riot$1) {
+  v = riot$1[k];
+  if (isFunction$1(v)) {
+    CrowdControl[k] = function() {
+      return v.apply(riot$1, arguments);
+    };
+  }
+}
+
+var CrowdControl$1 = CrowdControl;
+
+return CrowdControl$1;
 
 }());
