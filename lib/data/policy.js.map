@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "policy.js",
+  "sourceRoot": "../..",
+  "sources": [
+    "src/data/policy.coffee"
+  ],
+  "names": [],
+  "mappings": ""
+}
