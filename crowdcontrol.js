@@ -1,6 +1,7 @@
 var Crowdcontrol = (function () {
 'use strict';
 
+// node_modules/riot/lib/browser/common/global-variables.js
 const __TAGS_CACHE = [];
 const __TAG_IMPL = {};
 const GLOBAL_MIXIN = '__global_mixin';
@@ -27,6 +28,7 @@ const CASE_SENSITIVE_ATTRIBUTES = { 'viewbox': 'viewBox' };
 const RE_BOOL_ATTRS = /^(?:disabled|checked|readonly|required|allowfullscreen|auto(?:focus|play)|compact|controls|default|formnovalidate|hidden|ismap|itemscope|loop|multiple|muted|no(?:resize|shade|validate|wrap)?|open|reversed|seamless|selected|sortable|truespeed|typemustmatch)$/;
 const IE_VERSION = (WIN && WIN.document || {}).documentMode | 0;
 
+// node_modules/riot/lib/browser/common/util/check.js
 /**
  * Check Check if the passed argument is undefined
  * @param   { String } value -
@@ -123,6 +125,7 @@ var check = Object.freeze({
 	isReservedName: isReservedName
 });
 
+// node_modules/riot/lib/browser/common/util/dom.js
 /**
  * Shorter and fast way to select multiple nodes in the DOM
  * @param   { String } selector - DOM selector
@@ -279,6 +282,7 @@ var dom = Object.freeze({
 	walkNodes: walkNodes
 });
 
+// node_modules/riot/lib/browser/tag/styleManager.js
 var styleNode;
 var cssTextProp;
 var byName = {};
@@ -336,6 +340,8 @@ var styleManager = {
     else styleNode.innerHTML = style;
   }
 };
+
+// node_modules/riot-tmpl/dist/es6.tmpl.js
 
 /**
  * The riot template engine
@@ -765,6 +771,7 @@ var tmpl = (function () {
 
 })();
 
+// node_modules/riot-observable/dist/es6.observable.js
 var observable$1 = function(el) {
 
   /**
@@ -889,6 +896,7 @@ var observable$1 = function(el) {
 
 };
 
+// node_modules/riot/lib/browser/common/util/misc.js
 /**
  * Specialized function for looping an array-like collection with `each={}`
  * @param   { Array } list - collection of items
@@ -984,10 +992,12 @@ var misc = Object.freeze({
 	extend: extend
 });
 
+// node_modules/riot/lib/settings.js
 var settings$1 = extend(Object.create(brackets.settings), {
   skipAnonymousTags: true
 });
 
+// node_modules/riot/lib/browser/tag/setEventHandler.js
 const EVENTS_PREFIX_REGEX = /^on/;
 
 /**
@@ -1052,6 +1062,7 @@ function setEventHandler(name, handler, dom, tag) {
   dom.addEventListener(eventName, cb, false);
 }
 
+// node_modules/riot/lib/browser/tag/update.js
 /**
  * Update dynamically created data-is tags with changing expressions
  * @param { Object } expr - expression tag and expression info
@@ -1214,6 +1225,7 @@ function updateAllExpressions(expressions) {
   each(expressions, updateExpression.bind(this));
 }
 
+// node_modules/riot/lib/browser/tag/if.js
 var IfExpr = {
   init(dom, tag, expr) {
     remAttr(dom, CONDITIONAL_DIRECTIVE);
@@ -1257,6 +1269,7 @@ var IfExpr = {
   }
 };
 
+// node_modules/riot/lib/browser/tag/ref.js
 var RefExpr = {
   init(dom, parent, attrName, attrValue) {
     this.dom = dom;
@@ -1315,6 +1328,7 @@ var RefExpr = {
   }
 };
 
+// node_modules/riot/lib/browser/tag/each.js
 /**
  * Convert the item looped into an object used to extend the child tag properties
  * @param   { Object } expr - object containing the keys used to extend the children tags
@@ -1559,6 +1573,7 @@ function _each(dom, parent, expr) {
   return expr
 }
 
+// node_modules/riot/lib/browser/tag/parse.js
 /**
  * Walk the tag DOM to detect the expressions to evaluate
  * @this Tag
@@ -1665,6 +1680,7 @@ function parseAttributes(dom, attrs, fn) {
   });
 }
 
+// node_modules/riot/lib/browser/tag/mkdom.js
 /*
   Includes hacks needed for the Internet Explorer version 9 and below
   See: http://kangax.github.io/compat-table/es5/#ie8
@@ -1759,6 +1775,7 @@ function mkdom(tmpl, html) {
   return el
 }
 
+// node_modules/riot/lib/browser/tag/core.js
 /**
  * Another way to create a riot tag a bit more es6 friendly
  * @param { HTMLElement } el - tag DOM selector or DOM node/s
@@ -1974,6 +1991,7 @@ var core = Object.freeze({
 	version: version
 });
 
+// node_modules/riot/lib/browser/tag/tag.js
 // counter to give a unique id to all the Tag instances
 var __uid = 0;
 
@@ -2288,6 +2306,7 @@ function Tag$1(impl = {}, conf = {}, innerHTML) {
   }.bind(this));
 }
 
+// node_modules/riot/lib/browser/common/util/tags.js
 /**
  * Detect the tag implementation by a DOM node
  * @param   { Object } dom - DOM node we need to parse to get its tag implementation
@@ -2616,6 +2635,7 @@ var tags = Object.freeze({
 	selectTags: selectTags
 });
 
+// node_modules/riot/lib/riot.js
 /**
  * Riot public api
  */
@@ -2649,6 +2669,7 @@ var riot$1 = extend({}, core, {
   util,
 });
 
+// node_modules/es-object-assign/index.mjs
 var getOwnPropertySymbols;
 var hasOwnProperty;
 var objectAssign;
@@ -2737,6 +2758,7 @@ var index = objectAssign = (function() {
   };
 })();
 
+// node_modules/es-is/dist/index.mjs
 var isActualNaN;
 var isArgs;
 var isFn;
@@ -2841,6 +2863,7 @@ var isObject$1 = function(value) {
   return toStr.call(value) === '[object Object]';
 };
 
+// src/views/view.coffee
 var View;
 var collapsePrototype;
 var setPrototypeOf;
@@ -2976,6 +2999,7 @@ View = (function() {
 
 var View$1 = View;
 
+// node_modules/broken/dist/broken.mjs
 var PromiseInspection;
 
 var PromiseInspection$1 = PromiseInspection = (function() {
@@ -3336,6 +3360,7 @@ Promise$2.settle = settle;
 
 Promise$2.soon = soon$1;
 
+// node_modules/referential/dist/referential.mjs
 var Ref;
 var nextId;
 
@@ -3550,6 +3575,7 @@ refer.Ref = Ref$1;
 
 var refer$1 = refer;
 
+// src/views/inputify.coffee
 var inputify;
 var isRef;
 
@@ -3614,6 +3640,7 @@ inputify = function(data, configs) {
 
 var inputify$1 = inputify;
 
+// src/views/form.coffee
 var Form;
 var extend$1 = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 var hasProp = {}.hasOwnProperty;
@@ -3687,6 +3714,7 @@ Form = (function(superClass) {
 
 var Form$1 = Form;
 
+// src/views/input.coffee
 var Input;
 var extend$2 = function(child, parent) { for (var key in parent) { if (hasProp$1.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 var hasProp$1 = {}.hasOwnProperty;
@@ -3780,6 +3808,7 @@ Input = (function(superClass) {
 
 var Input$1 = Input;
 
+// src/views/index.coffee
 var Views;
 
 var Views$1 = Views = {
@@ -3789,6 +3818,7 @@ var Views$1 = Views = {
   inputify: inputify$1
 };
 
+// src/index.coffee
 var CrowdControl;
 var fn;
 var k;
