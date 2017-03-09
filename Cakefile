@@ -76,8 +76,7 @@ task 'coverage', 'Process coverage statistics', ->
     '''
 
 task 'watch', 'watch for changes and recompile project', ->
-  exec 'coffee -bcmw -o lib/ src/'
-  exec 'node_modules/.bin/bebop'
+  watch 'src/*', -> invoke 'build'
 
 task 'watch:test', 'watch for changes and re-run tests', ->
   invoke 'watch'
