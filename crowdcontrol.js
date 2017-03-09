@@ -3744,7 +3744,7 @@ Input = (function(superClass) {
         return _this.validate(pRef);
       };
     })(this));
-    return this.ref.on('set', (function(_this) {
+    return this.input.ref.on('set', (function(_this) {
       return function(n, v1, v2) {
         if (n === _this.input.name && v1 !== v2) {
           return _this.update();
