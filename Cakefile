@@ -20,9 +20,6 @@ task 'build', 'build project', (cb) ->
   yield bundle.write format: 'es'
   yield bundle.write format: 'cjs'
 
-task 'build:min', 'build project', ['build'], ->
-  exec 'uglifyjs crowdcontrol.js --compress --mangle --lint=false > crowdcontrol.min.js'
-
 task 'example', 'Launch Examples', ->
   exec 'coffee examples/server.coffee'
   exec 'cake watch'
