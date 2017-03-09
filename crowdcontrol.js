@@ -3790,6 +3790,7 @@ var Views$1 = Views = {
 };
 
 var CrowdControl;
+var fn;
 var k;
 var v;
 
@@ -3802,13 +3803,16 @@ CrowdControl = {
   }
 };
 
-for (k in riot$1) {
-  v = riot$1[k];
+fn = function(k, v) {
   if (isFunction$1(v)) {
-    CrowdControl[k] = function() {
+    return CrowdControl[k] = function() {
       return v.apply(riot$1, arguments);
     };
   }
+};
+for (k in riot$1) {
+  v = riot$1[k];
+  fn(k, v);
 }
 
 var CrowdControl$1 = CrowdControl;
