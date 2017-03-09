@@ -1,7 +1,7 @@
 {
   "name": "crowdcontrol",
   "version": "2.1.1",
-  "description": "Riot helpers for crowdstart",
+  "description": "Intelligent Riot Views",
   "main": "dist/crowdcontrol.js",
   "module": "dist/crowdcontrol.mjs",
   "js:next": "dist/crowdcontrol.mjs",
