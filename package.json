@@ -1,6 +1,6 @@
 {
   "name": "crowdcontrol",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Intelligent Riot Views",
   "main": "dist/crowdcontrol.js",
   "module": "dist/crowdcontrol.mjs",
