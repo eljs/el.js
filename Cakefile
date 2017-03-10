@@ -48,7 +48,7 @@ task 'test:ci', 'Run tests', (opts) ->
     bail:     true
     coverage: true
 
-task 'coverage', 'Process coverage statistics', ->
+task 'test:coverage', 'Process coverage statistics', ->
   exec '''
     cat ./coverage/lcov.info | coveralls
     cat ./coverage/coverage.json | codecov
@@ -85,4 +85,3 @@ task 'watch:test', 'watch for changes and re-run tests', ->
 
   watch 'src/*',          test
   watch 'node_modules/*', test
-
