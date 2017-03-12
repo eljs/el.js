@@ -1,17 +1,19 @@
-import riot  from 'riot'
-import Views from './views'
-import {isFunction} from 'es-is'
+import riot             from 'riot'
+import Views            from './views'
+import {isFunction}     from 'es-is'
+import {scheduleUpdate} from './schedule'
 
 CrowdControl =
   # deprecated
-  Views: Views
+  Views:    Views
 
-  View: Views.Form
+  View:     Views.View
+  Form:     Views.Form
+  Input:    Views.Input
 
   riot: riot
-
-  start: ()->
-    riot.mount('*', opts)
+  scheduleUpdate: ()->
+    scheduleUpdate()
 
 for k, v of riot
   do (k, v) ->

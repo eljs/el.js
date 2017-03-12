@@ -19,7 +19,7 @@ class Input extends View
     # auto refresh on update of field
     @input.ref.on 'set', (n, v1, v2) =>
       if n == @input.name && v1 != v2
-        @update()
+        @scheduleUpdate()
 
   getValue: (event) ->
     return event.target.value
@@ -50,11 +50,11 @@ class Input extends View
       .then (value)=>
         @changed(value)
         @valid = true
-        @update()
+        @scheduleUpdate()
       .catch (err)=>
         @error(err)
         @valid = false
-        @update()
+        @scheduleUpdate()
         throw err
 
     if pRef?
