@@ -1,6 +1,7 @@
-import riot         from 'riot'
-import objectAssign from 'es-object-assign'
-import {isFunction} from 'es-is'
+import riot             from 'riot'
+import objectAssign     from 'es-object-assign'
+import {isFunction}     from 'es-is'
+import {scheduleUpdate} from '../schedule'
 
 setPrototypeOf = (()->
   setProtoOf = (obj, proto)->
@@ -79,5 +80,7 @@ class View
 
   beforeInit: ->
   init: ->
+  scheduleUpdate: ->
+    scheduleUpdate @
 
 export default View
