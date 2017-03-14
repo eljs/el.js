@@ -1,17 +1,23 @@
 {
-  "name": "crowdcontrol",
+  "name": "el.js",
   "version": "2.1.13",
-  "description": "Intelligent Riot Views",
-  "main": "dist/crowdcontrol.js",
-  "module": "dist/crowdcontrol.mjs",
-  "js:next": "dist/crowdcontrol.mjs",
+  "description": "Higher-order elements powered by transclusion.",
+  "main": "dist/el.js",
+  "module": "dist/el.mjs",
+  "js:next": "dist/el.mjs",
   "scripts": {
     "prepublish": "cake build",
     "test": "cake test"
   },
   "keywords": [
-    "crowdstart",
-    "riot"
+    "el",
+    "elements",
+    "hanzo",
+    "html",
+    "riot",
+    "riotjs",
+    "templates",
+    "transclusion"
   ],
   "author": "Hanzo, Inc",
   "license": "MIT",

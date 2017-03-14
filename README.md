@@ -1,2 +1,2 @@
-# crowd-control
-Library of Riot.js Helpers
+# el.js
+### Higher-order elements powered by transclusion.
