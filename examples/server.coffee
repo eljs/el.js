@@ -10,8 +10,8 @@ bigLag = simulateLatency min: 1000, max: 5000
 app.use smallLag
 app.use express.static __dirname + '/'
 
-app.get '/crowdcontrol.js', (req, res)->
-  res.sendFile path.resolve(__dirname + '/../crowdcontrol.js')
+app.get '/el.js', (req, res)->
+  res.sendFile path.resolve(__dirname + '/../el.js')
 
 start = Date.now()
 

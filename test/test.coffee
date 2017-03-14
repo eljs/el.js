@@ -1,3 +1,3 @@
-describe 'crowdcontrol.js', ->
+describe 'el.js', ->
   it 'should instantiate', ->
     #do a thing

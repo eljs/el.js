@@ -1,13 +1,13 @@
 refer = require 'referential'
 window.riot = require 'riot'
 
-CrowdControl = require '../../src/'
+El = require '../../src/'
 
-window.Crowdcontrol = CrowdControl
+window.El = El
 
-View    = CrowdControl.Views.View
-Form    = CrowdControl.Views.Form
-Input   = CrowdControl.Views.Input
+View    = El.Views.View
+Form    = El.Views.Form
+Input   = El.Views.Input
 
 # validation
 isEmail = (value)->
@@ -72,7 +72,7 @@ class ExampleForm extends Form
           structure:
             ["Should not see", "This is also prefilled!"]
 
-    super
+    super()
 
   _submit: (event)->
     console.log @data()
@@ -80,6 +80,5 @@ class ExampleForm extends Form
 
 ExampleForm.register()
 
-$ ()->
-  CrowdControl.start()
-
+$ ->
+  El.start()

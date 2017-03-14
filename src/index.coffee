@@ -3,7 +3,7 @@ import Views            from './views'
 import {isFunction}     from 'es-is'
 import {scheduleUpdate} from './schedule'
 
-CrowdControl =
+El =
   # deprecated
   Views:    Views
 
@@ -18,7 +18,7 @@ CrowdControl =
 for k, v of riot
   do (k, v) ->
     if isFunction v
-      CrowdControl[k] = ->
+      El[k] = ->
         v.apply riot, arguments
 
-export default CrowdControl
+export default El
