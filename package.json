@@ -2,13 +2,18 @@
   "name": "el.js",
   "version": "2.1.13",
   "description": "Higher-order elements powered by transclusion.",
+  "homepage": "http://github.com/hanzo-io/el.js",
+  "repository": "github:hanzo-io/el.js",
+  "bugs": "http://github.com/hanzo-io/el.js/issues",
+  "author": "Hanzo, Inc",
+  "license": "MIT",
   "main": "dist/el.js",
   "module": "dist/el.mjs",
   "js:next": "dist/el.mjs",
-  "scripts": {
-    "prepublish": "cake build",
-    "test": "cake test"
-  },
+  "files": [
+    "dist/",
+    "src/"
+  ],
   "keywords": [
     "el",
     "elements",
@@ -17,10 +22,9 @@
     "riot",
     "riotjs",
     "templates",
+    "templates",
     "transclusion"
   ],
-  "author": "Hanzo, Inc",
-  "license": "MIT",
   "devDependencies": {
     "bebop": "1.11.5",
     "cake": "^0.1.1",
@@ -47,5 +51,10 @@
     "referential": "0.5.15",
     "riot": "3.3.2",
     "riot-observable": "3.0.0"
+  },
+  "scripts": {
+    "prepublishOnly": "cake build",
+    "test": "cake test"
   }
 }
+
