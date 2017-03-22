@@ -12,6 +12,9 @@ task 'build', 'build project', (cb) ->
   bundle.write
     entry:  'src/index.coffee'
     format: 'es'
+    compilers:
+      coffee:
+        version: 1
 
 task 'test', 'Run tests', ['build', 'static-server'], (opts) ->
   bail     = opts.bail     ? true
