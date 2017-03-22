@@ -24,6 +24,8 @@
   "devDependencies": {
     "bebop": "1.11.5",
     "cake": "^0.1.1",
+    "cake-bundle": "0.2.1",
+    "cake-outdated": "0.1.13",
     "cake-publish": "0.1.5",
     "cake-version": "0.1.9",
     "chai": "3.5.0",
@@ -31,7 +33,6 @@
     "coffee-script": "^1.10.0",
     "express": "^4.12.4",
     "express-simulate-latency": "0.0.2",
-    "handroll": "0.11.3",
     "mocha": "3.2.0",
     "mock-xhr": "^0.1.0",
     "riot": "2.3.12",
