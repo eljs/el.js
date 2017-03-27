@@ -9,13 +9,13 @@ import Promise from 'broken'
 
 class Form extends View
   # input for validate
-  configs: null
+  # configs: null
 
   # output from validate that's used for configuring InputViews
-  inputs: null
+  # inputs: null
 
   # ref to use for validate
-  data: null
+  # data: null
 
   initInputs: ->
     @inputs = {}
