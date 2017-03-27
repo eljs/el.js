@@ -1,16 +1,20 @@
 require 'shortcake'
 
-use 'cake-version'
+use 'cake-bundle'
+use 'cake-outdated'
 use 'cake-publish'
+use 'cake-version'
 
 task 'clean', 'clean project', ->
   exec 'rm -rf dist'
 
 task 'build', 'build project', (cb) ->
-  (require 'handroll').write
-    entry:    'src/index.coffee'
-    format:   'es'
-    external: true
+  bundle.write
+    entry:  'src/index.coffee'
+    format: 'es'
+    compilers:
+      coffee:
+        version: 1
 
 task 'test', 'Run tests', ['build', 'static-server'], (opts) ->
   bail     = opts.bail     ? true

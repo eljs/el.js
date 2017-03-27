@@ -35,7 +35,8 @@ class Form extends View
     for name, input of @inputs
       pRef = {}
       input.trigger 'validate', pRef
-      ps.push pRef.p
+      if pRef.p?
+        ps.push pRef.p
 
     Promise.settle(ps).then (results) =>
       for result in results
