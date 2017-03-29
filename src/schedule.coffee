@@ -38,8 +38,9 @@ scheduleUpdate = (tag)->
 
     todos[tag._schedulingId] = tag
 
-  rafId = raf ()->
-    p.resolve()
+  if rafId == -1
+    rafId = raf ()->
+      p.resolve()
 
   return p
 
