@@ -1,5 +1,5 @@
 import Promise  from 'broken'
-import riot     from 'riot'
+import riot     from 'riot/lib/riot'
 import {raf}    from 'es-raf'
 
 todos = {}

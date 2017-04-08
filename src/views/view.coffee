@@ -1,4 +1,4 @@
-import riot             from 'riot'
+import riot             from 'riot/lib/riot'
 import objectAssign     from 'es-object-assign'
 import {isFunction}     from 'es-is'
 import {scheduleUpdate} from '../schedule'
