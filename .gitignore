@@ -1,5 +1,4 @@
 node_modules
 .test
 npm-debug.log
-dist
 lib
