@@ -1,6 +1,6 @@
-import Promise      from 'broken'
-import refer        from 'referential'
-import {isFunction} from 'es-is'
+import Promise     from 'broken'
+import refer       from 'referential'
+import isFunction  from 'es-is/function'
 
 isRef = (o) -> o? and isFunction o.ref
 

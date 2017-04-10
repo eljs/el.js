@@ -1,6 +1,7 @@
-import riot             from 'riot/lib/riot'
-import objectAssign     from 'es-object-assign'
-import {isFunction}     from 'es-is'
+import isFunction   from 'es-is/function'
+import objectAssign from 'es-object-assign'
+import riot         from 'riot/lib/riot'
+
 import {scheduleUpdate} from '../schedule'
 
 setPrototypeOf = (()->
