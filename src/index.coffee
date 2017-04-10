@@ -1,6 +1,7 @@
+import isFunction       from 'es-is/function'
 import riot             from 'riot/lib/riot'
+
 import Views            from './views'
-import {isFunction}     from 'es-is'
 import {scheduleUpdate} from './schedule'
 
 El =
