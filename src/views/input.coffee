@@ -35,7 +35,6 @@ class Input extends View
 
     @clearError()
     @validate()
-    return true
 
   error: (err) ->
     @errorMessage = err?.message ? err
