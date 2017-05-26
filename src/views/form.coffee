@@ -1,6 +1,5 @@
 import View       from  './view'
 import inputify   from  './inputify'
-import observable from 'riot-observable'
 
 import Promise from 'broken'
 
@@ -23,10 +22,6 @@ class Form extends View
     if @configs?
       @inputs = inputify @data, @configs
 
-      # make the input an observable so both form and input can observe it
-      for name, input of @inputs
-        observable input
-
   init: ->
     @initInputs()
 
@@ -38,7 +33,7 @@ class Form extends View
       if pRef.p?
         ps.push pRef.p
 
-    Promise.settle(ps).then (results) =>
+    p = Promise.settle(ps).then (results) =>
       for result in results
         if !result.isFulfilled()
           return
@@ -48,7 +43,7 @@ class Form extends View
       e.preventDefault()
       e.stopPropagation()
 
-    return false
+    return p
 
   _submit: ->
     # do actual submit stuff
