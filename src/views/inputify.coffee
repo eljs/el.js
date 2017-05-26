@@ -1,6 +1,7 @@
 import Promise     from 'broken'
 import refer       from 'referential'
 import isFunction  from 'es-is/function'
+import observable  from 'riot-observable'
 
 isRef = (o) -> o? and isFunction o.ref
 
@@ -48,6 +49,9 @@ inputify = (data, configs) ->
 
         config: config
         validate: validate
+
+      # make the input an observable so both form and input can observe it
+      observable input
 
       inputs[name] = input
 
