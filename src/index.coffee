@@ -1,5 +1,6 @@
 import isFunction       from 'es-is/function'
 import riot             from 'riot/lib/riot'
+import refer            from 'referential'
 
 import Views            from './views'
 import {scheduleUpdate} from './schedule'
@@ -12,7 +13,9 @@ El =
   Form:     Views.Form
   Input:    Views.Input
 
+  ref:  refer
   riot: riot
+
   scheduleUpdate: ()->
     scheduleUpdate()
 
