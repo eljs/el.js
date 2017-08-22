@@ -5,15 +5,6 @@ class Input extends View
   input: null
   valid: false
   errorMessage: ''
-  errorHtml: '''
-  <div class="error-container" if="{ errorMessage }">
-    <div class="error-message">{ errorMessage }</div>
-  </div>
-  '''
-
-  beforeInit: ->
-    # Modify template before initialization
-    @html += @errorHtml
 
   init: ->
     # if no input or lookup, throw error

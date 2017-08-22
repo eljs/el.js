@@ -16,6 +16,9 @@ class Form extends View
   # ref to use for validate
   # data: null
 
+  # default transclude contents
+  html:   '<yield/>'
+
   initInputs: ->
     @inputs = {}
 
