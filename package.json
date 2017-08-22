@@ -1,6 +1,6 @@
 {
   "name": "el.js",
-  "version": "2.1.26",
+  "version": "2.1.27",
   "description": "Higher-order elements powered by transclusion.",
   "homepage": "http://github.com/hanzo-io/el.js",
   "repository": "github:hanzo-io/el.js",
