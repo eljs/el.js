@@ -3,16 +3,37 @@ use 'sake-outdated'
 use 'sake-publish'
 use 'sake-version'
 
+option '-b', '--browser [browser]', 'browser to use for tests'
+option '-g', '--grep [filter]',     'test filter'
+option '-t', '--test [test]',       'specify test to run'
+option '-v', '--verbose',           'enable verbose test logging'
+
 task 'clean', 'clean project', ->
   exec 'rm -rf lib'
 
-task 'build', 'build js', () ->
+task 'build', 'build js', ['build:static'], ->
   bundle.write
     entry:  'src/index.coffee'
     compilers:
       coffee:
         version: 1
-  yield exec 'cp lib/el.js el.js'
+
+task 'build:min', 'build js for production', ['build'], ->
+  yield bundle.write
+    entry:     'src/index.coffee'
+    format:    'web'
+    external:  false
+    sourceMap: false
+    browser:   false
+    compilers:
+      coffee:
+        version: 1
+  yield exec 'uglifyjs el.js -o el.min.js'
+
+task 'build:static', 'build static assets', ->
+  exec '''
+    bebop compile'
+  '''
 
 task 'test', 'Run tests', ['build', 'static-server'], (opts) ->
   bail     = opts.bail     ? true

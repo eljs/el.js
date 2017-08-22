@@ -51,7 +51,7 @@
   },
   "scripts": {
     "build": "sake build",
-    "prepublishOnly": "sake build",
+    "prepublishOnly": "sake build:min",
     "pretest": "sake build",
     "test": "sake test"
   }
