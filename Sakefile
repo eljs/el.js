@@ -12,6 +12,7 @@ task 'build', 'build js', () ->
     compilers:
       coffee:
         version: 1
+  yield exec 'cp lib/el.js el.js'
 
 task 'test', 'Run tests', ['build', 'static-server'], (opts) ->
   bail     = opts.bail     ? true
