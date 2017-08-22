@@ -10,7 +10,7 @@ isRef = (o) -> o? and isFunction o.ref
 #   configs: a mapping of model values to a middleware stack eg.
 #       field1: middleware
 #       where middleware is an array of (value, name, model)-> value
-inputify = (data, configs) ->
+inputify = (data, configs = {}) ->
   ref = data
   if !isRef ref
     ref = refer data

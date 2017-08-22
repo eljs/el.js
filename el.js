@@ -3922,6 +3922,9 @@ isRef = function(o) {
 
 inputify = function(data, configs) {
   var config, fn, inputs, name, ref;
+  if (configs == null) {
+    configs = {};
+  }
   ref = data;
   if (!isRef(ref)) {
     ref = refer$1(data);
