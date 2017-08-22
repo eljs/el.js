@@ -7,7 +7,341 @@
 [![license][license-img]][license-url]
 [![chat][chat-img]][chat-url]
 
-> Higher-order elements powered by transclusion.
+> A reasonable micro-app framework with practical reuseability.
+
+-----
+
+# Introduction
+
+El.js is a framework built ontop of [Riot.js](http://www.riotjs.com) templates for building micro-apps.
+
+## What is a *micro-app*?
+
+Web-frameworks require developers to build most if not all their webpages to be dynamic webapps.  This allows developers to make sure everything on their webpage obeys a single consistent, predictable, rendering flow that they can reason about.  However, there are also many disadvantages compared to traditional static websites including more complex caching schemes, longer load-times, and SEO problems.  Microapps offer a powerful solution for these drawbacks.  Instead of building giant monolithic web applications, build small apps and embed them on your otherwise static pages.
+
+A micro-app performs a small and very tightly scoped piece of functionality that can be reused over and over again. Micro-apps don't differ much from the idea of embeddable widgets before frameworks became the standard, but they differ in execution by emphasizing a reliance on reasonable frameworks and practical reuseability.
+
+## A Simple Form Example
+
+HTML: index.html
+```html
+<html>
+	<head>
+	<!-- Head Content -->
+	<link rel="stylesheet" src="https://cdn.jsdelivr.net/gh/hanzo-io/el-controls/theme.css" />
+	</head>
+	<body>
+		<my-form>
+			<div>
+				<label>Type Your Name</label>
+				<!-- bind my-input to parent(my-form).data.name, parent.data is implicit for what is supplied to bind attribute -->
+				<my-input bind='name' />
+			</div>
+			<div>
+				<span>Your Name Is</span>
+				<span>{ data.name }</span>
+			</div
+		</my-form>
+		<!-- El.js Library -->
+		<script src="https://cdn.jsdelivr.net/gh/hanzo-io/el.js/el.min.js"></script>
+		<script src="my-script.js"></script>
+	</body>
+</html>
+```
+
+JS: my-script.js
+```javascript
+// window.El is the global value
+
+// El.Form extends El.View and validates bound El.Inputs
+class Form extends El.Form {
+	constuctor () {
+		// data contains your state
+		this.data = { 
+			name: '?', 
+		}
+		// your custom tag name
+		this.tag = 'my-form'
+
+		super()
+	}
+}
+
+Form.register()
+
+// El.Input extends El.View and binds to updating El.Form values
+class Input extends El.Input {
+	constructor () {
+		// your custom tag name
+		this.tag = 'my-input'
+		// the default this.change function works with all basic html inputs(<input>, <textarea>, ...).
+		this.html = '<input onkeydown="{ change }" />'
+
+		super()
+	}
+}
+
+Input.register()
+
+El.mount('*')
+```
+
+## Installation
+
+### HTML
+
+Add this tag to the bottom of <body> before your custom scripts and deps.
+```html
+<script src="https://cdn.jsdelivr.net/gh/hanzo-io/el.js/el.min.js"></script>
+```
+
+### Node:
+
+Install via NPM
+```javascript
+npm install el.js --save
+```
+
+Supports CommonJS
+```javascript
+var El = require 'el.js'
+```
+
+or ES6 imports
+```javascript
+import El from 'el.js'
+```
+
+# API
+
+## Types
+
+### MiddlewareFunction
+* type: (value: any) => Promise | any
+
+This type is used for defining middleware for _El.Form_.  See _El.Form_ for more information.
+
+### InputType 
+
+This type is referenced by _El.Form_ to store the information used to validate the field associated with _name_.
+
+#### Properties
+
+##### name
+* type: string
+
+This is the name of a field on _El.Form_'s _data_ property that the rest of this type references.
+
+##### ref
+* type: [Referrential Tree](https://github.com/zeekay/referential)
+
+This is a link to the mutable data tree which can retrieve the value of _name_ by calling this.ref.get(_name_)
+
+##### config
+* type: _MiddlewareFunction_ | [_MiddlewareFunction_]
+
+This type stores the original _MiddlewareFunction_ or _MiddlewareFunctions_ used to create _validate()_
+
+#### Methods
+
+##### validate
+* type: ([Referrential Tree](https://github.com/zeekay/referential), string) => Promise
+
+This method calls all the _MiddlwareFunctions_ in serial using promises.
+
+## Classes
+
+### El.View
+This is the base class for all El classes.  Each _El.View_ corresponds with a custom tag.  Extend this class to make your own custom tags.
+
+#### Properties
+
+##### tag 
+* type: string
+* default: ''
+
+This is the custom tag name.
+
+##### html
+* type: string
+* default: ''
+
+This is a string representing the tag's inner html.
+
+##### css
+* type: string
+* default: ''
+
+This is a string representing the tag's css. It is injected once per class at the bottom of the <head> tag when mounted.
+
+##### data
+* type: [Referrential Tree](https://github.com/zeekay/referential)
+* default: undefined
+
+This property stores the state of the tag.
+
+##### root
+* type: HTMLElement
+* default: undefined
+
+This property stores a reference to the tag in your webpage that the mounted view is bound to.
+
+#### Methods
+
+##### beforeInit()
+The code here executes before the tag is initialized.
+
+##### init()
+The code here executes when tag is initialized but before its mounted.
+
+__Recommended__ - If you need to bind to the [tag's lifecycle](http://riotjs.com/api/#events), do it here.
+
+##### update()
+This method updates the tag. This is called implicitly after events triggered from webpage. See onkeydown in A 'Simple Form Example' for such a case. Manually call this method to update the tag. 
+
+__Recommended__ - It is recommended to manually call _scheduleUpdate()_ instead to prevent synchronous update cascades.
+
+##### scheduleUpdate()
+This method schedules an asynchronous update call. It batches update calls at the top-most view if there are nested views.
+
+#### Inherited from Riot Observable (on, one, off, trigger)
+Each _El.View_ is an event emitter.  See riot.observable for further documentation, http://riotjs.com/api/observable/
+
+#### Static
+
+##### El.View.register
+
+This registers the current 
+
+### El.Form extends El.View
+This class is used to represent forms and more complex IO driven micro-apps.
+
+#### Properties
+
+##### configs
+* type: Object
+* default: null
+
+Supply a map of names to a _MiddlewareFunction_ or array of _MiddlewareFunctions_.  Do validation and input sanitization with these functions such as:
+
+```javascript
+function isRequired(value) {
+  value = value.trim()
+  if (value && value != '') {
+    return value
+  }
+  
+  throw new Error('Required')
+}
+```
+
+##### inputs
+* type: InputType
+* default: null
+
+Each element in _configs_ is converted to an element in _inputs_.  Modifying this directly is not recommended.
+
+#### Methods
+
+##### init()
+Code here executes when tag is initialized but before its mounted.  Calls _initInputs()_ so manually call that - or call super() in ES6.
+
+__Recommended__ - If you need to bind to the [tag's lifecycle](http://riotjs.com/api/#events), do it here.
+
+##### initInputs()
+Compile _configs_ and assign the emitted struct to _inputs_.  _inputs_ like _configs_ contain references to the named field in _data_.
+
+##### submit(Event)
+Thie method triggers validation for each field in _data_ as defined in _configs_.  This method should be called as an event handler/listener.  It calls _submit()_ if validation
+
+##### \_submit()
+Code here executes when the form is validated during _submit()_ call
+
+### El.Input extends El.View
+This is the base class for all El custom tags.
+
+#### Properties
+
+##### bind
+* type: string
+* default: ''
+
+This property determines which field in the parent form's _data_ this binds to.
+
+##### input
+* type: _InputType_
+* default: nil
+
+This property is taken from the parent form's _inputs_ property based on what parent _data_'s field _bind_ specifies.
+
+##### valid
+* type: bool
+* default: false
+
+This property is used to determine the state the input is in.  It is set when this.input.validate is called, it is only ever set to true if this.input.validate's returned promise executes completely.
+
+##### errorMessage
+* type: string
+* default: ''
+
+This property is set to the first error message that this.input.validate's returned promise catches.
+
+#### Methods
+
+##### getValue(Event) => any
+
+This method gets the value from the input.
+
+By default, this method returns the _Event_'s target.value.
+
+##### change(event)
+
+This method updates the input and then validates it.  This method should be called as an event handler/listener.
+
+##### error(Error)
+
+This method sets _errorMessage_.
+
+##### changed()
+
+This method is called when this.input.validate's returned promise executes completely.
+
+##### clearError()
+
+This method set _errorMessage_ to ''.
+
+## Functions
+
+### El.scheduleUpdate
+
+### Inherited from Riot (El.mount, El.update, etc)
+El.js's life cycle functions are inherited from [Riot.js](http://riotjs.com/api/).
+
+## Default Obserable Mutable Tree
+El.js uses [Referrential Trees](https://github.com/zeekay/referential) to store its form data.
+
+### (BYODS) Bring Your Own Data Structure
+Implement the get, set, on, once, off methods from referrential around your own datastructure and drop it in as the data property.
+
+# Best Practices
+
+## Use Hollow Containers
+
+A *hollow container* is a custom element who contains only one or more <yield/> tags. 
+
+*TODO*
+
+## Use a Single State Store
+
+*TODO*
+
+# Advanced Usage
+
+*TODO*
+
+## Mutable Trees
+
+*TODO*
 
 ## License
 [BSD][license-url]
