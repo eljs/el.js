@@ -3990,6 +3990,8 @@ Form = (function(superClass) {
     return Form.__super__.constructor.apply(this, arguments);
   }
 
+  Form.prototype.html = '<yield/>';
+
   Form.prototype.initInputs = function() {
     this.inputs = {};
     if (this.configs != null) {
@@ -4057,12 +4059,6 @@ Input = (function(superClass) {
   Input.prototype.valid = false;
 
   Input.prototype.errorMessage = '';
-
-  Input.prototype.errorHtml = '<div class="error-container" if="{ errorMessage }">\n  <div class="error-message">{ errorMessage }</div>\n</div>';
-
-  Input.prototype.beforeInit = function() {
-    return this.html += this.errorHtml;
-  };
 
   Input.prototype.init = function() {
     var ref1, ref2;
