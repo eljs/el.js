@@ -6,10 +6,9 @@ use 'sake-version'
 task 'clean', 'clean project', ->
   exec 'rm -rf lib'
 
-task 'build', 'build project', (cb) ->
+task 'build', 'build js', () ->
   bundle.write
     entry:  'src/index.coffee'
-    format: 'es'
     compilers:
       coffee:
         version: 1

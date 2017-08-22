@@ -19,7 +19,6 @@
   ],
   "main": "lib/el.js",
   "module": "lib/el.mjs",
-  "js:next": "lib/el.mjs",
   "files": [
     "lib/",
     "src/"
