@@ -1,19 +1,28 @@
+exec = require 'executive'
 fs   = require 'fs'
 path = require 'path'
 
-requisite = 'node_modules/.bin/requisite -g'
+debounce = (fn, wait = 500) ->
+  last = (new Date) - wait
+  ->
+    now = new Date
 
-files =
-  js:
-    in:  'src/index.coffee'
-    out: 'el.js'
-  exampleFormJs:
-    in:  'examples/form/form.coffee'
-    out: 'examples/form/form.js'
-  exampleTableJs:
-    in:  'examples/table/table.coffee'
-    out: 'examples/table/table.js'
+    # Return if we haven't waited long enough
+    return if wait > (now - last)
 
+    fn.apply null, arguments
+    last = now
+
+writeFile = (dst, content) ->
+  fs.writeFile dst, content, 'utf8', (err) ->
+    console.error err if err?
+
+compileCoffee = (src) ->
+  return
+  return unless /^src|src\/index.coffee$/.test src
+  exec 'cake build'
+
+coffeeCompiler = debounce compileCoffee
 
 module.exports =
   port: 4242
@@ -21,22 +30,10 @@ module.exports =
   cwd: process.cwd()
 
   exclude: [
-    /css/
     /lib/
     /node_modules/
     /vendor/
   ]
 
   compilers:
-    coffee: (src) ->
-      if /examples.form/.test src
-        return "#{requisite} #{files.exampleFormJs.in} -o #{files.exampleFormJs.out}"
-
-      if /examples.table/.test src
-        return "#{requisite} #{files.exampleTableJs.in} -o #{files.exampleTableJs.out}"
-
-      if /^src/.test src
-        return "#{requisite} #{files.js.in} -o #{files.js.out}"
-
-      if /src\/index.coffee/.test src
-        return "#{requisite} #{files.js.in} -o #{files.js.out}"
+    coffee: coffeeCompiler
