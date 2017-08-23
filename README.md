@@ -90,7 +90,7 @@ El.mount('*')
 
 ### HTML
 
-Add this tag to the bottom of <body> before your custom scripts and deps.
+Add this tag to the bottom of <body> before your custom scripts and deps and reference window.El.
 ```html
 <script src="https://cdn.jsdelivr.net/gh/hanzo-io/el.js/el.min.js"></script>
 ```
@@ -116,16 +116,16 @@ import El from 'el.js'
 
 ## Types
 
-### MiddlewareFunction
-* type: (value: any) => Promise | any
-
-This type is used for defining middleware for _El.Form_.  See _El.Form_ for more information.
-
 ### InputType 
 
 This type is referenced by _El.Form_ to store the information used to validate the field associated with _name_.
 
 #### Properties
+
+##### config
+* type: _MiddlewareFunction_ | [_MiddlewareFunction_]
+
+This type stores the original _MiddlewareFunction_ or _MiddlewareFunctions_ used to create _validate()_
 
 ##### name
 * type: string
@@ -137,11 +137,6 @@ This is the name of a field on _El.Form_'s _data_ property that the rest of this
 
 This is a link to the mutable data tree which can retrieve the value of _name_ by calling this.ref.get(_name_)
 
-##### config
-* type: _MiddlewareFunction_ | [_MiddlewareFunction_]
-
-This type stores the original _MiddlewareFunction_ or _MiddlewareFunctions_ used to create _validate()_
-
 #### Methods
 
 ##### validate
@@ -149,24 +144,17 @@ This type stores the original _MiddlewareFunction_ or _MiddlewareFunctions_ used
 
 This method calls all the _MiddlwareFunctions_ in serial using promises.
 
+### MiddlewareFunction
+* type: (value: any) => Promise | any
+
+This type is used for defining middleware for _El.Form_.  See _El.Form_ for more information.
+
 ## Classes
 
 ### El.View
 This is the base class for all El classes.  Each _El.View_ corresponds with a custom tag.  Extend this class to make your own custom tags.
 
 #### Properties
-
-##### tag 
-* type: string
-* default: ''
-
-This is the custom tag name.
-
-##### html
-* type: string
-* default: ''
-
-This is a string representing the tag's inner html.
 
 ##### css
 * type: string
@@ -180,11 +168,23 @@ This is a string representing the tag's css. It is injected once per class at th
 
 This property stores the state of the tag.
 
+##### html
+* type: string
+* default: ''
+
+This is a string representing the tag's inner html.
+
 ##### root
 * type: HTMLElement
 * default: undefined
 
 This property stores a reference to the tag in your webpage that the mounted view is bound to.
+
+##### tag 
+* type: string
+* default: ''
+
+This is the custom tag name.
 
 #### Methods
 
@@ -196,13 +196,13 @@ The code here executes when tag is initialized but before its mounted.
 
 __Recommended__ - If you need to bind to the [tag's lifecycle](http://riotjs.com/api/#events), do it here.
 
+##### scheduleUpdate()
+This method schedules an asynchronous update call. It batches update calls at the top-most view if there are nested views.
+
 ##### update()
 This method updates the tag. This is called implicitly after events triggered from webpage. See onkeydown in A 'Simple Form Example' for such a case. Manually call this method to update the tag. 
 
 __Recommended__ - It is recommended to manually call _scheduleUpdate()_ instead to prevent synchronous update cascades.
-
-##### scheduleUpdate()
-This method schedules an asynchronous update call. It batches update calls at the top-most view if there are nested views.
 
 #### Inherited from Riot Observable (on, one, off, trigger)
 Each _El.View_ is an event emitter.  See riot.observable for further documentation, http://riotjs.com/api/observable/
@@ -211,7 +211,7 @@ Each _El.View_ is an event emitter.  See riot.observable for further documentati
 
 ##### El.View.register
 
-This registers the current 
+This registers the current custom tag.
 
 ### El.Form extends El.View
 This class is used to represent forms and more complex IO driven micro-apps.
@@ -268,6 +268,12 @@ This is the base class for all El custom tags.
 
 This property determines which field in the parent form's _data_ this binds to.
 
+##### errorMessage
+* type: string
+* default: ''
+
+This property is set to the first error message that this.input.validate's returned promise catches.
+
 ##### input
 * type: _InputType_
 * default: nil
@@ -280,27 +286,11 @@ This property is taken from the parent form's _inputs_ property based on what pa
 
 This property is used to determine the state the input is in.  It is set when this.input.validate is called, it is only ever set to true if this.input.validate's returned promise executes completely.
 
-##### errorMessage
-* type: string
-* default: ''
-
-This property is set to the first error message that this.input.validate's returned promise catches.
-
 #### Methods
-
-##### getValue(Event) => any
-
-This method gets the value from the input.
-
-By default, this method returns the _Event_'s target.value.
 
 ##### change(event)
 
 This method updates the input and then validates it.  This method should be called as an event handler/listener.
-
-##### error(Error)
-
-This method sets _errorMessage_.
 
 ##### changed()
 
@@ -310,9 +300,21 @@ This method is called when this.input.validate's returned promise executes compl
 
 This method set _errorMessage_ to ''.
 
+##### error(Error)
+
+This method sets _errorMessage_.
+
+##### getValue(Event) => any
+
+This method gets the value from the input.
+
+By default, this method returns the _Event_'s target.value.
+
 ## Functions
 
 ### El.scheduleUpdate
+
+Schedule update for all micro-apps on the page.
 
 ### Inherited from Riot (El.mount, El.update, etc)
 El.js's life cycle functions are inherited from [Riot.js](http://riotjs.com/api/).
@@ -325,24 +327,86 @@ Implement the get, set, on, once, off methods from referrential around your own 
 
 # Best Practices
 
-## Use Hollow Containers
+## Use Hollow Containers and Minimal Components
 
-A *hollow container* is a custom element who contains only one or more <yield/> tags. 
+A *hollow container* is a custom tag whose content can be overwritten entirely(only contains content in one or more <yield/> tags).  Instead of building tightly coupled widgets, decompose the widget into a containers and minimal components to maximize reuseability.  The hollow container should supply helper functions and event listeners for use inside of the template while minimal components should encapsulate the smallest pieces of functionality that makes sense.  
 
-*TODO*
+By abstracting your ui elements like this, it is much easier for someone else to reuse and customize your code.  See [shop.js](https://github.com/hanzo-io/shop.js) for an implementation.
 
 ## Use a Single State Store
 
-*TODO*
+It is best to use a single high level state store to simplify saving and restoring state for your webpage or entire website.
+
+This can be acomplished by supplying all top level containers on the page the same _data_ field. via the initial mount call
+```javascript
+var data = {
+	state0: 0,
+	state1: 1,
+}
+
+El.mount('*', { data: data })
+```
 
 # Advanced Usage
 
-*TODO*
+## Nested Inheritence
 
-## Mutable Trees
+Unlike normal Riot rendering, El.js allows the implicit accessing of values on this.parent and this.parent...parent via prototypical inheritence of the rendering context. This is done to avoid repeatedly passing the same data down through nested containers because it is error prone and only verbose.
 
-*TODO*
+Explicitly passing the data variable:
+```html
+<my-container-1>
+	<my-container-2 data='{ data }'>
+		<my-container-3 data='{ data }'>
+			value: { data.value1 }
+		</my-container-3>
+		<my-container-3 data='{ data }'>
+			value: { data.value2 }
+		</my-container-3>
+	</my-container-2>
+	<my-container-2 data='{ data }'>
+		<my-container-3 data='{ data }'>
+			value: { data.value3 }
+		</my-container-3>
+		<my-container-3 data='{ data }'>
+			value: { data.value4 }
+		</my-container-3>
+	</my-container-2>
+</my-container-1>
+```
 
+```javascript
+// El.mount passes data to the top level container of each micro-app
+El.mount('*', data: { value1: 1, value2: 2, value3: 3, value4: 4 } )
+```
+
+Is equivalent to implicitly referencing the data variable.
+
+```html
+<my-container-1>
+	<my-container-2>
+		<my-container-3>
+			value: { data.value1 }
+		</my-container-3>
+		<my-container-3>
+			value: { data.value2 }
+		</my-container-3>
+	</my-container-2>
+	<my-container-2>
+		<my-container-3>
+			value: { data.value3 }
+		</my-container-3>
+		<my-container-3>
+			value: { data.value4 }
+		</my-container-3>
+	</my-container-2>
+</my-container-1>
+```
+
+```javascript
+// El.mount passes data to the top level container of each micro-app
+El.mount('*', data: { value1: 1, value2: 2, value3: 3, value4: 4 } )
+```
 ## License
 [BSD][license-url]
 
