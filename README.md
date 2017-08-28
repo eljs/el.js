@@ -242,11 +242,11 @@ Implement the get, set, on, once, off methods from referrential around your own 
 
 # Best Practices
 
-## Use Containers and Components
+## Use Containers and Controls
 
-A *container* is a custom tag whose content can be overwritten entirely (only contains content in one or more <yield/> tags).  A *component* is a minimal piece of well defined functionality such as an input, select, or a GoogleMaps embed.
+A *container* is a custom tag that provides methods to use for its internal template and whose content can be overwritten entirely (only contains content in one or more <yield/> tags).  A *control* is a component which interacts with the user for the purposes of displaying information in an interesting way or getting input such as an input, select, or a GoogleMaps embed.
 
-Instead of building widgets in a tightly coupled, decompose the widget into a containers and components to maximize reuseability.  The container should supply helper methods and event listeners for use inside of the template while minimal components should encapsulate the smallest pieces of functionality that makes sense.  Structure the html however you want.  Release both your completed widget and containers and components to your users so they can customize the widget for their varios requirements.
+Instead of building widgets in a tightly coupled fashion, decompose the widget into a containers and controls to maximize reuseability.  Structure the internal html in whatever way makes the most sense.  Then, release your completed widget, container, and controls to your users so they can customize the widget for their various requirements.
 
 By abstracting your ui elements like this, it is much easier for someone else to reuse and customize your code.  See [shop.js](https://github.com/hanzo-io/shop.js) for an implementation.
 
@@ -268,7 +268,7 @@ El.mount('*', { data: data })
 
 ## Nested Protypical Inheritence
 
-Unlike normal Riot rendering, El.js allows the implicit accessing of values on this.parent and this.parent...parent via prototypical inheritence of the rendering context. This is done to avoid repeatedly passing the same data down through nested containers because it is error prone and overly verbose.  This also makes it easier to build containers and components.
+Unlike normal Riot rendering, El.js allows the implicit accessing of values on this.parent and this.parent...parent via prototypical inheritence of the rendering context. This is done to avoid repeatedly passing the same data down through nested containers because it is error prone and overly verbose.  This also makes it easier to build containers and controls.
 
 Explicitly passing the data variable:
 ```html
