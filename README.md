@@ -121,108 +121,22 @@ import El from 'el.js'
 This type is referenced by _El.Form_ to store the information used to validate the field associated with _name_.
 
 #### Properties
-
-##### config
-* type: _MiddlewareFunction_ | [_MiddlewareFunction_]
-
-This type stores the original _MiddlewareFunction_ or _MiddlewareFunctions_ used to create _validate()_
-
-##### name
-* type: string
-
-This is the name of a field on _El.Form_'s _data_ property that the rest of this type references.
-
-##### ref
-* type: [Referrential Tree](https://github.com/zeekay/referential)
-
-This is a link to the mutable data tree which can retrieve the value of _name_ by calling this.ref.get(_name_)
+| Name | Type |  Default | Description |
+| --- | --- | --- | --- |
+| config | _MiddlewareFunction_ or [_MiddlewareFunction_] | undefined | This type stores the original _MiddlewareFunction_ or _MiddlewareFunctions_ used to create _validate()_ |
+| name | string | '' | This is the name of a field on _El.Form_'s _data_ property that the rest of this type references. |
+| ref | [Referrential Tree](https://github.com/zeekay/referential) | undefined | This is a link to the mutable data tree which can retrieve the value of _name_ by calling this.ref.get(_name_) |
 
 #### Methods
 
-##### validate
-* type: ([Referrential Tree](https://github.com/zeekay/referential), string) => Promise
-
-This method calls all the _MiddlwareFunctions_ in serial using promises.
+| Name | Type | Description |
+| --- | --- | --- |
+| validate | ([Referrential Tree](https://github.com/zeekay/referential), string) => Promise |This method calls all the _MiddlwareFunctions_ in serial using promises. |
 
 ### MiddlewareFunction
-* type: (value: any) => Promise | any
+* type: (value: any) => Promise or any
 
-This type is used for defining middleware for _El.Form_.  See _El.Form_ for more information.
-
-## Classes
-
-### El.View
-This is the base class for all El classes.  Each _El.View_ corresponds with a custom tag.  Extend this class to make your own custom tags.
-
-#### Properties
-
-##### css
-* type: string
-* default: ''
-
-This is a string representing the tag's css. It is injected once per class at the bottom of the <head> tag when mounted.
-
-##### data
-* type: [Referrential Tree](https://github.com/zeekay/referential)
-* default: undefined
-
-This property stores the state of the tag.
-
-##### html
-* type: string
-* default: ''
-
-This is a string representing the tag's inner html.
-
-##### root
-* type: HTMLElement
-* default: undefined
-
-This property stores a reference to the tag in your webpage that the mounted view is bound to.
-
-##### tag 
-* type: string
-* default: ''
-
-This is the custom tag name.
-
-#### Methods
-
-##### beforeInit()
-The code here executes before the tag is initialized.
-
-##### init()
-The code here executes when tag is initialized but before its mounted.
-
-__Recommended__ - If you need to bind to the [tag's lifecycle](http://riotjs.com/api/#events), do it here.
-
-##### scheduleUpdate()
-This method schedules an asynchronous update call. It batches update calls at the top-most view if there are nested views.
-
-##### update()
-This method updates the tag. This is called implicitly after events triggered from webpage. See onkeydown in A 'Simple Form Example' for such a case. Manually call this method to update the tag. 
-
-__Recommended__ - It is recommended to manually call _scheduleUpdate()_ instead to prevent synchronous update cascades.
-
-#### Inherited from Riot Observable (on, one, off, trigger)
-Each _El.View_ is an event emitter.  See riot.observable for further documentation, http://riotjs.com/api/observable/
-
-#### Static
-
-##### El.View.register
-
-This registers the current custom tag.
-
-### El.Form extends El.View
-This class is used to represent forms and more complex IO driven micro-apps.
-
-#### Properties
-
-##### configs
-* type: Object
-* default: null
-
-Supply a map of names to a _MiddlewareFunction_ or array of _MiddlewareFunctions_.  Do validation and input sanitization with these functions such as:
+This type is used for defining middleware for _El.Form_.  Do validation and input sanitization with these functions such as:
 
 ```javascript
 function isRequired(value) {
@@ -234,87 +148,88 @@ function isRequired(value) {
   throw new Error('Required')
 }
 ```
+#### PromiseReference 
+* type: { p: Promise }
 
-##### inputs
-* type: InputType
-* default: null
+This type is used internally in places to facilitate returning promises by reference.
 
-Each element in _configs_ is converted to an element in _inputs_.  Modifying this directly is not recommended.
+## Classes
+
+### El.View
+This is the base class for all El classes.  Each _El.View_ corresponds with a custom tag.  Extend this class to make your own custom tags.
+
+#### Properties
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| css | string | '' | This is a string representing the tag's css. It is injected once per class at the bottom of the <head> tag when mounted. |
+| data | [Referrential Tree](https://github.com/zeekay/referential) | undefined | This property stores the state of the tag. |
+| html | string | '' | This is a string representing the tag's inner html. |
+| root | HTMLElement | undefined | This property stores a reference to the tag in your webpage that the mounted view is bound to. |
+| tag | string | '' | This is the custom tag name. |
 
 #### Methods
 
-##### init()
-Code here executes when tag is initialized but before its mounted.  Calls _initInputs()_ so manually call that - or call super() in ES6.
+| Name | Type | Description |
+| --- | --- | --- |
+| beforeInit | () => | The code here executes before the tag is initialized. |
+| init | () => | The code here executes when tag is initialized but before its mounted.  __Recommended__ - If you need to bind to the [tag's lifecycle](http://riotjs.com/api/#events), do it here. |
+| scheduleUpdate | () => Promise | This method schedules an asynchronous update call. It batches update calls at the top-most view if there are nested views. It returns a promise for when the update executes |
+| update | () => | This method updates the tag. This is called implicitly after events triggered from webpage. See onkeydown in A 'Simple Form Example' for such a case. Manually call this method to update the tag. __Recommended__ - It is recommended to manually call _scheduleUpdate()_ instead to prevent synchronous update cascades. |
 
-__Recommended__ - If you need to bind to the [tag's lifecycle](http://riotjs.com/api/#events), do it here.
+#### Methods Inherited from Riot Observable (on, one, off, trigger)
+Each _El.View_ is an event emitter.  See riot.observable for further documentation, http://riotjs.com/api/observable/
 
-##### initInputs()
-Compile _configs_ and assign the emitted struct to _inputs_.  _inputs_ like _configs_ contain references to the named field in _data_.
+#### Static Methods
 
-##### submit(Event)
-Thie method triggers validation for each field in _data_ as defined in _configs_.  This method should be called as an event handler/listener.  It calls _submit()_ if validation
+| Name | Type | Description |
+| --- | --- | --- |
+| El.View.register | () => | This registers the current custom tag with the rendering engine. Call it after you defined a tag |
 
-##### \_submit()
-Code here executes when the form is validated during _submit()_ call
+### El.Form extends El.View
+This class is used to represent forms and more complex IO driven micro-apps.
+
+#### Properties
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| configs | Object | undefined | Supply a map of names to a _MiddlewareFunction_ or array of _MiddlewareFunctions_. See _MiddlewareFunction_ for more information. |
+| inputs | InputType | null | Each element in _configs_ is converted to an element in _inputs_.  Modifying this directly is not recommended. |
+
+#### Methods
+| Name | Type | Description |
+| --- | --- | --- |
+| init | () => | Code here executes when tag is initialized but before its mounted.  Calls _initInputs()_ so manually call that - or call super() in ES6. __Recommended__ - If you need to bind to the [tag's lifecycle](http://riotjs.com/api/#events), do it here. |
+| initInputs | () => |Compile _configs_ and assign the emitted struct to _inputs_.  _inputs_ like _configs_ contain references to the named field in _data_. |
+| submit | (Event) => Promise | This method triggers validation for each field in _data_ as defined in _configs_.  This method should be called as an event handler/listener.  It calls _submit()_ if validation is successful, returns a promise for when validation succeeds/fails |
+| \_submit | () => | Code here executes when the form is validated during _submit()_ call |
 
 ### El.Input extends El.View
 This is the base class for all El custom tags.
 
 #### Properties
 
-##### bind
-* type: string
-* default: ''
-
-This property determines which field in the parent form's _data_ this binds to.
-
-##### errorMessage
-* type: string
-* default: ''
-
-This property is set to the first error message that this.input.validate's returned promise catches.
-
-##### input
-* type: _InputType_
-* default: nil
-
-This property is taken from the parent form's _inputs_ property based on what parent _data_'s field _bind_ specifies.
-
-##### valid
-* type: bool
-* default: false
-
-This property is used to determine the state the input is in.  It is set when this.input.validate is called, it is only ever set to true if this.input.validate's returned promise executes completely.
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| bind | string | '' | This property determines which field in the parent form's _data_ this binds to. |
+| errorMessage | string | '' | This property is set to the first error message that this.input.validate's returned promise catches. |
+| input | _InputType_ | null | This property is taken from the parent form's _inputs_ property based on what parent _data_'s field _bind_ specifies. |
+| valid | bool | false | This property is used to determine the validation state the input is in.  It is set when this.input.validate is called, it is only ever set to true if this.input.validate's returned promise executes completely. |
 
 #### Methods
-
-##### change(event)
-
-This method updates the input and then validates it.  This method should be called as an event handler/listener.
-
-##### changed()
-
-This method is called when this.input.validate's returned promise executes completely.
-
-##### clearError()
-
-This method set _errorMessage_ to ''.
-
-##### error(Error)
-
-This method sets _errorMessage_.
-
-##### getValue(Event) => any
-
-This method gets the value from the input.
-
-By default, this method returns the _Event_'s target.value.
+| Name | Type | Description |
+| --- | --- | --- |
+| change | (Event) => | This method updates the input and then validates it.  This method should be called by an event handler/listener. |
+| changed | () => | This method is called when this.input.validate's returned promise executes completely. |
+| clearError | () => | This method sets _errorMessage_ to '' and is called before validation. |
+| error | (Error) => | This method sets _errorMessage_ and is called when validation fails. |
+| getValue | (Event) => any | This method gets the value from the input. By default, this method returns the _Event_'s target.value. |
+| validate | (PromiseReference?) => Promise | This method validates the input, it returns a Promise representing validation success and fail both by reference (needed internally) and by value. |
 
 ## Functions
 
-### El.scheduleUpdate
-
-Schedule update for all micro-apps on the page.
+| Name | Type | Description |
+| El.scheduleUpdate | () => | Schedule update for all micro-apps on the page. |
 
 ### Inherited from Riot (El.mount, El.update, etc)
 El.js's life cycle functions are inherited from [Riot.js](http://riotjs.com/api/).
@@ -327,9 +242,11 @@ Implement the get, set, on, once, off methods from referrential around your own 
 
 # Best Practices
 
-## Use Hollow Containers and Minimal Components
+## Use Containers and Components
 
-A *hollow container* is a custom tag whose content can be overwritten entirely(only contains content in one or more <yield/> tags).  Instead of building tightly coupled widgets, decompose the widget into a containers and minimal components to maximize reuseability.  The hollow container should supply helper functions and event listeners for use inside of the template while minimal components should encapsulate the smallest pieces of functionality that makes sense.  
+A *container* is a custom tag whose content can be overwritten entirely (only contains content in one or more <yield/> tags).  A *component* is a minimal piece of well defined functionality such as an input, select, or a GoogleMaps embed.
+
+Instead of building widgets in a tightly coupled, decompose the widget into a containers and components to maximize reuseability.  The container should supply helper methods and event listeners for use inside of the template while minimal components should encapsulate the smallest pieces of functionality that makes sense.  Structure the html however you want.  Release both your completed widget and containers and components to your users so they can customize the widget for their varios requirements.
 
 By abstracting your ui elements like this, it is much easier for someone else to reuse and customize your code.  See [shop.js](https://github.com/hanzo-io/shop.js) for an implementation.
 
@@ -349,9 +266,9 @@ El.mount('*', { data: data })
 
 # Advanced Usage
 
-## Nested Inheritence
+## Nested Protypical Inheritence
 
-Unlike normal Riot rendering, El.js allows the implicit accessing of values on this.parent and this.parent...parent via prototypical inheritence of the rendering context. This is done to avoid repeatedly passing the same data down through nested containers because it is error prone and only verbose.
+Unlike normal Riot rendering, El.js allows the implicit accessing of values on this.parent and this.parent...parent via prototypical inheritence of the rendering context. This is done to avoid repeatedly passing the same data down through nested containers because it is error prone and overly verbose.  This also makes it easier to build containers and components.
 
 Explicitly passing the data variable:
 ```html
