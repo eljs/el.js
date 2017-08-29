@@ -212,6 +212,7 @@ This is the base class for all El custom tags.
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | bind | string | '' | This property determines which field in the parent form's _data_ this binds to. |
+| lookup | string | '' | Same as _bind_, __deprecated__. |
 | errorMessage | string | '' | This property is set to the first error message that this.input.validate's returned promise catches. |
 | input | _InputType_ | null | This property is taken from the parent form's _inputs_ property based on what parent _data_'s field _bind_ specifies. |
 | valid | bool | false | This property is used to determine the validation state the input is in.  It is set when this.input.validate is called, it is only ever set to true if this.input.validate's returned promise executes completely. |
