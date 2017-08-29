@@ -187,7 +187,7 @@ Each _El.View_ is an event emitter.  See riot.observable for further documentati
 | El.View.register | () => | This registers the current custom tag with the rendering engine. Call it after you defined a tag |
 
 ### El.Form extends El.View
-This class is used to represent forms and more complex IO driven micro-apps.
+This class is used to represent forms as well as more complex IO driven micro-apps.  This class supplies common form validation and form submit logic.
 
 #### Properties
 
@@ -205,7 +205,7 @@ This class is used to represent forms and more complex IO driven micro-apps.
 | \_submit | () => | Code here executes when the form is validated during _submit()_ call |
 
 ### El.Input extends El.View
-This is the base class for all El custom tags.
+This is the base class for building form inputs and IO controls.
 
 #### Properties
 
