@@ -194,7 +194,7 @@ This class is used to represent forms and more complex IO driven micro-apps.
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | configs | Object | undefined | Supply a map of names to a _MiddlewareFunction_ or array of _MiddlewareFunctions_. See _MiddlewareFunction_ for more information. |
-| inputs | InputType | null | Each element in _configs_ is converted to an element in _inputs_.  Modifying this directly is not recommended. |
+| inputs | Object | null | Each element in _configs_ is converted to an element in _inputs_.  Modifying this directly is not recommended. |
 
 #### Methods
 | Name | Type | Description |
@@ -230,6 +230,7 @@ This is the base class for all El custom tags.
 ## Functions
 
 | Name | Type | Description |
+| --- | --- | --- |
 | El.scheduleUpdate | () => | Schedule update for all micro-apps on the page. |
 
 ### Inherited from Riot (El.mount, El.update, etc)
