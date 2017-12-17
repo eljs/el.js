@@ -4089,6 +4089,7 @@ Input = (function(superClass) {
     return this.input.ref.on('set', (function(_this) {
       return function(n, v1, v2) {
         if (n === _this.input.name && v1 !== v2) {
+          _this._change(v1, true);
           return _this.scheduleUpdate();
         }
       };
@@ -4100,10 +4101,15 @@ Input = (function(superClass) {
   };
 
   Input.prototype.change = function(event) {
-    var name, ref, ref1, value;
-    ref1 = this.input, ref = ref1.ref, name = ref1.name;
+    var value;
     value = this.getValue(event);
-    if (value === ref.get(name)) {
+    return this._change(value);
+  };
+
+  Input.prototype._change = function(value, forced) {
+    var name, ref, ref1;
+    ref1 = this.input, ref = ref1.ref, name = ref1.name;
+    if (!forced && value === ref.get(name)) {
       return;
     }
     this.input.ref.set(name, value);

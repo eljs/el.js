@@ -1,9 +1,21 @@
 import View from './view'
 import observable from 'riot-observable'
 
+# Input binds to specific fields in the data tree and automatically
+# updates the UI from the data tree on update and updates fields in
+# the data tree on user interaction.
 class Input extends View
   input: null
+
+  # Is the input validated?
+  #
+  # Input state is calculated like this:
+  # initial: @value = false
+  # valid:   @value = true
+  # invald:  @value = false && @errorMessage != ''
   valid: false
+
+  # Records the error from any validation middleware if any
   errorMessage: ''
 
   init: ->
@@ -30,16 +42,21 @@ class Input extends View
     # auto refresh on update of field
     @input.ref.on 'set', (n, v1, v2) =>
       if n == @input.name && v1 != v2
+        @_change v1, true
         @scheduleUpdate()
 
   getValue: (event) ->
     return event.target.value
 
   change: (event) ->
+    value = @getValue event
+
+    @_change value
+
+  _change: (value, forced) ->
     {ref, name} = @input
 
-    value = @getValue event
-    if value == ref.get name
+    if !forced && value == ref.get name
       return
 
     @input.ref.set name, value
