@@ -3827,6 +3827,7 @@ scheduleUpdate = function(tag$$1) {
 var View;
 var collapsePrototype;
 var setPrototypeOf;
+var slice$1 = [].slice;
 
 setPrototypeOf = (function() {
   var mixinProperties, setProtoOf;
@@ -3901,12 +3902,16 @@ View = (function() {
                 if (_this[k] != null) {
                   oldFn = _this[k];
                   return _this[k] = function() {
-                    oldFn.apply(_this, arguments);
-                    return v.apply(_this, arguments);
+                    var args;
+                    args = 1 <= arguments.length ? slice$1.call(arguments, 0) : [];
+                    oldFn.apply(_this, args);
+                    return v.apply(_this, args);
                   };
                 } else {
                   return _this[k] = function() {
-                    return v.apply(_this, arguments);
+                    var args;
+                    args = 1 <= arguments.length ? slice$1.call(arguments, 0) : [];
+                    return v.apply(_this, args);
                   };
                 }
               });
@@ -3937,11 +3942,15 @@ View = (function() {
           return function(name, handler) {
             if (typeof handler === 'string') {
               return _this.on(name, function() {
-                return _this[handler].apply(_this, arguments);
+                var args;
+                args = 1 <= arguments.length ? slice$1.call(arguments, 0) : [];
+                return _this[handler].apply(_this, args);
               });
             } else {
               return _this.on(name, function() {
-                return handler.apply(_this, arguments);
+                var args;
+                args = 1 <= arguments.length ? slice$1.call(arguments, 0) : [];
+                return handler.apply(_this, args);
               });
             }
           };
