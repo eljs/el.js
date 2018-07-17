@@ -21,6 +21,11 @@ collapsePrototype = (collapse, proto)->
 
   parentProto = Object.getPrototypeOf proto
   collapsePrototype collapse, parentProto
+
+  if members = Object.getOwnPropertyNames parentProto
+    for member in members
+      collapse[member] = parentProto[member]
+
   objectAssign collapse, parentProto
 
 class View
