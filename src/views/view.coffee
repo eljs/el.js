@@ -50,12 +50,12 @@ class View
             do (v) =>
               if @[k]?
                 oldFn = @[k]
-                @[k] = ()=>
-                  oldFn.apply @, arguments
-                  return v.apply @, arguments
+                @[k] = (args...)=>
+                  oldFn.apply @, args
+                  return v.apply @, args
               else
-                @[k] = ()=>
-                  return v.apply @, arguments
+                @[k] = (args...)=>
+                  return v.apply @, args
           else
             @[k] = v
 
@@ -78,9 +78,9 @@ class View
         for name, handler of @events
           do (name, handler) =>
             if typeof handler == 'string'
-              @on name, ()=> @[handler].apply @, arguments
+              @on name, (args...)=> @[handler].apply @, args
             else
-              @on name, ()=> handler.apply @, arguments
+              @on name, (args...)=> handler.apply @, args
 
       @init opts
 
