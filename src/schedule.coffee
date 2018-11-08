@@ -7,6 +7,9 @@ rafId = -1
 p = null
 id = 0
 
+window.Promise               ?= Promise
+window.requestAnimationFrame ?= raf
+
 scheduleUpdate = (tag)->
   if !p
     p = new Promise
@@ -39,7 +42,7 @@ scheduleUpdate = (tag)->
     todos[tag._schedulingId] = tag
 
   if rafId == -1
-    rafId = raf ()->
+    rafId = requestAnimationFrame ()->
       p.resolve()
 
   return p
