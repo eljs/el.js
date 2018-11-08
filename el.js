@@ -3720,7 +3720,7 @@ var frameDuration;
 var id$1;
 var last;
 var queue;
-var requestAnimationFrame;
+var requestAnimationFrame$1;
 
 frameDuration = 1000 / 60;
 
@@ -3730,7 +3730,7 @@ last = 0;
 
 queue = [];
 
-var raf = requestAnimationFrame = function(callback) {
+var raf = requestAnimationFrame$1 = function(callback) {
   var next, now_;
   if (queue.length === 0) {
     now_ = browser();
@@ -3778,6 +3778,14 @@ p = null;
 
 id = 0;
 
+if (window.Promise == null) {
+  window.Promise = Promise$2;
+}
+
+if (window.requestAnimationFrame == null) {
+  window.requestAnimationFrame = raf;
+}
+
 scheduleUpdate = function(tag$$1) {
   var currentTag, parentTag;
   if (!p) {
@@ -3816,7 +3824,7 @@ scheduleUpdate = function(tag$$1) {
     todos[tag$$1._schedulingId] = tag$$1;
   }
   if (rafId === -1) {
-    rafId = raf(function() {
+    rafId = requestAnimationFrame(function() {
       return p.resolve();
     });
   }
